@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Barbearia Vlad">
+    <meta name="keywords" content="barbearia, corte de cabelo, barba, Vlad, salão masculino">
+    <title>Barbearia Vlad - Cortes, Barba e Estilo</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <p id="api-error" class="api-error" hidden></p>
+
+    <header class="topo" role="banner">
+        <a href="#call-to-action" id="logo" class="logo" aria-label="Ir para o início da página">BARBEARIA VLAD</a>
+
+        <button id="btnMobile" type="button" aria-label="Abrir menu" aria-haspopup="true" aria-controls="menu" aria-expanded="false">
+            <span class="hamburger"></span>
+        </button>
+
+        <nav id="menu" class="menu" aria-label="Navegação Principal">
+            <a href="#call-to-action" class="menu-link">Início</a>
+            <a href="#sobre" class="menu-link">Sobre</a>
+            <a href="#servicos" class="menu-link">Serviços</a>
+            <a href="#precos" class="menu-link">Preços</a>
+            <a href="#equipe" class="menu-link">Equipe</a>
+            <a href="#galeria" class="menu-link">Galeria</a>
+            <a href="#localizacao" class="menu-link">Localização</a>
+            <a href="#avaliacoes" class="menu-link">Avaliações</a>
+        </nav>
+    </header>
+
+    <main role="main">
+        <section id="call-to-action" class="banner" aria-labelledby="banner-titulo">
+            <img id="cta-img" src="img/bastao-barbearia.jpg" alt="Interior da barbearia" loading="lazy">
+
+            <div class="banner-left" data-aos="fade-right">
+                <h1 id="banner-titulo">BARBEARIA</h1>
+                <h2>VLAD</h2>
+                <div class="linha" aria-hidden="true"></div>
+                <a id="cta-wa" href="#" class="btn" aria-label="Agendar via WhatsApp">WhatsApp</a>
+            </div>
+
+            <div class="banner-center" data-aos="fade-left">
+                <h3>Horários</h3>
+                <div id="banner-hours-default"></div>
+                <div id="banner-hours-special"></div>
+            </div>
+        </section>
+
+        <section id="sobre" class="sobre" aria-labelledby="sobre-titulo">
+            <article class="sobre-container" data-aos="fade-up">
+                <figure class="sobre-img">
+                    <div class="img-placeholder">
+                        <img id="sobre-img" src="img/about-us.jpg" alt="Sobre a barbearia" loading="lazy">
+                    </div>
+                </figure>
+                <div class="sobre-texto">
+                    <h2 id="sobre-titulo">Sobre Nós</h2>
+                    <p id="sobre-texto"></p>
+                </div>
+            </article>
+        </section>
+
+        <section id="servicos" class="servicos" aria-labelledby="servicos-titulo">
+            <h2 id="servicos-titulo" data-aos="fade-down">Nossos Serviços</h2>
+            <div id="servicos-root" class="servicos-container"></div>
+        </section>
+
+        <section id="precos" class="precos" aria-labelledby="precos-titulo">
+            <h2 id="precos-titulo" data-aos="fade-down">Preços</h2>
+            <div class="precos-wrap" data-aos="fade-up">
+                <table class="precos-table" id="precos-table">
+                    <thead>
+                        <tr>
+                            <th>Categoria</th>
+                            <th>Serviço</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="precos-tbody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="equipe" class="equipe" aria-labelledby="equipe-titulo">
+            <header class="equipe-topo" data-aos="fade-up">
+                <h2 id="equipe-titulo">Nossa Equipe</h2>
+                <hr class="linha" aria-hidden="true">
+            </header>
+            <div id="equipe-root" class="equipe-container"></div>
+        </section>
+
+        <section id="galeria" class="galeria" aria-labelledby="galeria-titulo">
+            <h2 id="galeria-titulo" data-aos="fade-down">Galeria</h2>
+            <div id="galeria-root" class="galeria-grid" data-aos="fade-up"></div>
+        </section>
+
+        <section id="localizacao" class="localizacao" aria-labelledby="localizacao-titulo">
+            <div class="localizacao-container">
+                <div class="localizacao-texto" data-aos="fade-right">
+                    <h2 id="localizacao-titulo">Onde Atendemos</h2>
+                    <p id="localizacao-intro"></p>
+                    <p id="localizacao-endereco"></p>
+                </div>
+                <div class="localizacao-mapa" data-aos="fade-left">
+                    <iframe id="map-iframe" title="Mapa de localização" width="100%" height="300"
+                        style="border:0; border-radius:15px; box-shadow: 0 4px 10px rgba(0,0,0,0.4);" allowfullscreen=""
+                        loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </section>
+
+        <section id="avaliacoes" class="avaliacoes" aria-labelledby="avaliacoes-titulo" data-aos="fade-up">
+            <h2 id="avaliacoes-titulo">Avaliações</h2>
+            <div class="film-carousel">
+                <div class="film-track" id="filmTrack"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="rodape" role="contentinfo" data-aos="fade-up">
+        <div class="rodape-container">
+            <div class="rodape-coluna logo-coluna">
+                <h2 class="rodape-logo">BARBEARIA VLAD</h2>
+                <p id="footer-tagline"></p>
+            </div>
+            <div class="rodape-coluna">
+                <h3>Visite-nos</h3>
+                <p id="footer-a1"></p>
+                <p id="footer-a2"></p>
+                <p id="footer-a3"></p>
+            </div>
+            <div class="rodape-coluna">
+                <h3>Contato</h3>
+                <p id="footer-p1"></p>
+                <p id="footer-p2"></p>
+            </div>
+            <div class="rodape-coluna">
+                <h3>Horários</h3>
+                <p id="footer-h1"></p>
+                <p id="footer-h2"></p>
+            </div>
+        </div>
+        <div class="rodape-bottom">
+            <p>&copy; 2026 Barbearia Vlad - Todos os direitos reservados</p>
+        </div>
+    </footer>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+    <script>
+        (function () {
+            var btn = document.getElementById('btnMobile');
+            var menu = document.getElementById('menu');
+            var links = document.querySelectorAll('.menu-link');
+            function toggleMenu(ev) {
+                if (ev.type === 'touchstart') ev.preventDefault();
+                menu.classList.toggle('active');
+                btn.classList.toggle('active');
+                var on = menu.classList.contains('active');
+                btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+            }
+            if (btn && menu) {
+                btn.addEventListener('click', toggleMenu);
+                btn.addEventListener('touchstart', toggleMenu);
+            }
+            links.forEach(function (link) {
+                link.addEventListener('click', function () {
+                    if (menu.classList.contains('active')) {
+                        menu.classList.remove('active');
+                        btn.classList.remove('active');
+                        btn.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            });
+        })();
+    </script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            easing: 'ease-in-out',
+            once: true,
+            offset: 80,
+            disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        });
+    </script>
+</body>
+
+</html>
