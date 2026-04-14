@@ -1,8 +1,10 @@
 /**
- * URL da pasta "api" no seu servidor PHP (sem barra no final).
- * Exemplo: https://meusite.infinityfree.me/api
- *
- * Depois de publicar o front na Vercel, coloque aqui a mesma base e
- * configure CORS_ALLOWED_ORIGIN no config.php do backend com a URL do Vercel.
+ * Mesmo domínio (InfinityFree com backend em /backend/): use caminho relativo —
+ * evita erro se o site abrir em http e a URL estiver em https (ou o contrário).
  */
-const API_BASE = 'https://SEU-DOMINIO-PHP.com/api';
+const API_BASE = '/backend/api';
+
+/**
+ * Se um dia o HTML estiver na Vercel e o PHP em outro host, troque por URL completa, ex.:
+ * const API_BASE = 'https://seudominio.infinityfree.me/backend/api';
+ */

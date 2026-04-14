@@ -69,10 +69,11 @@ if (isset($_GET['del'])) {
         if ($stmt) {
             $stmt->bind_param('i', $id);
             $stmt->execute();
-            $res = $stmt->get_result();
-            $row = $res->fetch_assoc();
-            if ($row) {
-                $fn = $row['filename'];
+            $stmt->store_result();
+            if ($stmt->num_rows === 1) {
+                $stmt->bind_result($filename);
+                $stmt->fetch();
+                $fn = $filename;
             }
             $stmt->close();
         }

@@ -95,15 +95,14 @@ require_once __DIR__ . '/admin_header.php';
 <?php foreach ($cats as $c) {
     $cid = (int) $c['id'];
     $items = [];
-    $st = $mysqli->prepare('SELECT id, name, price_display FROM service_items WHERE category_id = ? ORDER BY sort_order, id');
-    if ($st) {
-        $st->bind_param('i', $cid);
-        $st->execute();
-        $ir = $st->get_result();
+    $cid_safe = (int) $cid;
+    $ir = $mysqli->query(
+        'SELECT id, name, price_display FROM service_items WHERE category_id = ' . $cid_safe . ' ORDER BY sort_order, id'
+    );
+    if ($ir) {
         while ($row = $ir->fetch_assoc()) {
             $items[] = $row;
         }
-        $st->close();
     }
     ?>
     <h2><?php echo h($c['title']); ?> <small style="color:#888;">(ícone: <?php echo h($c['icon']); ?>)</small>

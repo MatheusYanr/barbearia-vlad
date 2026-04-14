@@ -1,18 +1,16 @@
 <?php
+/**
+ * Copie para config.php e preencha. Não commite config.php com senha em repositório público.
+ */
 
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'nome_do_banco');
 define('DB_USER', 'usuario_mysql');
 define('DB_PASS', 'senha_mysql');
 
-define('SITE_PUBLIC_URL', 'https://seudominio.infinityfree.me');
+define('SITE_PUBLIC_URL', 'https://seudominio.com');
 
-/**
- * Domínio do site no Vercel (com https), para CORS.
- * Ex.: https://barbearia-vlad.vercel.app
- * Para testar local com Live Server, pode usar temporariamente '*' (não use * em produção real).
- */
-define('CORS_ALLOWED_ORIGIN', 'https://SEU-PROJETO.vercel.app');
+/** URL exata do site que abre o index (mesmo domínio) ou * para qualquer origem na API. */
+define('CORS_ALLOWED_ORIGIN', 'https://seudominio.com');
 
-/** Pasta de uploads no servidor (não altere se mantiver a pasta uploads ao lado de config.php) */
 define('UPLOAD_DIR', __DIR__ . '/uploads/');
