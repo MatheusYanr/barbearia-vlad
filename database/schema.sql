@@ -28,13 +28,14 @@ CREATE TABLE reviews (
     photo_path VARCHAR(255) NOT NULL,
     sort_order INT NOT NULL DEFAULT 0,
     is_active TINYINT NOT NULL DEFAULT 1,
+    source VARCHAR(20) NOT NULL DEFAULT 'manual',
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 INSERT INTO settings (setting_key, setting_value) VALUES
 ('about_text', 'Nosso objetivo e proporcionar uma experiencia unica, combinando tecnicas tradicionais com tendencias atuais, sempre com conforto e qualidade.'),
 ('weekday_hours', 'Segunda a Sexta - 9h as 12h e das 13h30 as 19h30'),
-('saturday_hours', 'Sabados - 9h as 12h e das 13h30 as 17h'),
+('saturday_hours', 'Sábados - 9h às 12h e das 13h30 às 17h'),
 ('special_hours', 'Feriados e dias especiais: consulte no WhatsApp.'),
 ('phone_1', '(48) 98494-0065'),
 ('phone_2', '(48) 93380-2543');
