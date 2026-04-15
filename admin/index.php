@@ -9,6 +9,8 @@ if (!isset($_SESSION['admin_id'])) {
     exit;
 }
 
+header('Content-Type: text/html; charset=UTF-8');
+
 require_once __DIR__ . '/../php/helpers.php';
 $conn = require __DIR__ . '/../php/db.php';
 
@@ -511,20 +513,20 @@ $errorMessage = trim((string)($_GET['error'] ?? ''));
 
         <div class="grid">
             <section class="card">
-                <h2>Adicionar novo servico</h2>
-                <p>Use este formulario para inserir novos servicos na tabela de precos.</p>
+                <h2>Adicionar novo serviço</h2>
+                <p>Use este formulário para inserir novos serviços na tabela de preços.</p>
 
-                <form method="post" action="">
+                <form method="post" action="" accept-charset="UTF-8">
                     <input type="hidden" name="action" value="add_service">
 
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="service_name">Nome do servico</label>
+                            <label for="service_name">Nome do serviço</label>
                             <input type="text" id="service_name" name="service_name" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="service_price">Preco</label>
+                            <label for="service_price">Preço</label>
                             <input type="text" id="service_price" name="service_price" placeholder="Ex: 35,00" required>
                         </div>
 
@@ -537,23 +539,23 @@ $errorMessage = trim((string)($_GET['error'] ?? ''));
                     </div>
 
                     <div class="form-actions">
-                        <button class="btn-primary" type="submit">Adicionar servico</button>
+                        <button class="btn-primary" type="submit">Adicionar serviço</button>
                     </div>
                 </form>
             </section>
 
             <section class="card">
-                <h2>Servicos e precos atuais</h2>
-                <p>Edite os valores no mesmo estilo da tabela de precos mostrada no site.</p>
+                <h2>Serviços e preços atuais</h2>
+                <p>Edite os valores no mesmo estilo da tabela de preços mostrada no site.</p>
 
                 <div class="service-list">
                     <?php if (empty($services)): ?>
-                    <p>Nenhum servico cadastrado ainda.</p>
+                    <p>Nenhum serviço cadastrado ainda.</p>
                     <?php endif; ?>
 
                     <?php foreach ($services as $service): ?>
                     <article class="service-item">
-                        <form method="post" class="service-main">
+                        <form method="post" class="service-main" accept-charset="UTF-8">
                             <input type="hidden" name="action" value="update_service">
                             <input type="hidden" name="service_id" value="<?= (int)$service['id'] ?>">
 
@@ -563,7 +565,7 @@ $errorMessage = trim((string)($_GET['error'] ?? ''));
                             </div>
 
                             <div class="form-group">
-                                <label>Preco</label>
+                                <label>Preço</label>
                                 <input type="text" name="service_price"
                                     value="<?= h(number_format((float)$service['price'], 2, ',', '.')) ?>" required>
                             </div>
@@ -580,7 +582,7 @@ $errorMessage = trim((string)($_GET['error'] ?? ''));
                         </form>
 
                         <div class="service-item-actions">
-                            <form method="post" onsubmit="return confirm('Deseja remover este servico?');">
+                            <form method="post" onsubmit="return confirm('Deseja remover este serviço?');" accept-charset="UTF-8">
                                 <input type="hidden" name="action" value="delete_service">
                                 <input type="hidden" name="service_id" value="<?= (int)$service['id'] ?>">
                                 <button class="btn-danger" type="submit">Remover</button>
@@ -592,10 +594,10 @@ $errorMessage = trim((string)($_GET['error'] ?? ''));
             </section>
 
             <section class="card">
-                <h2>Adicionar nova avaliacao</h2>
-                <p>Cadastre o texto da avaliacao, nota e foto do cliente.</p>
+                <h2>Adicionar nova avaliação</h2>
+                <p>Cadastre o texto da avaliação, nota e foto do cliente.</p>
 
-                <form method="post" action="" enctype="multipart/form-data">
+                <form method="post" action="" enctype="multipart/form-data" accept-charset="UTF-8">
                     <input type="hidden" name="action" value="add_review">
 
                     <div class="form-grid">
@@ -622,28 +624,28 @@ $errorMessage = trim((string)($_GET['error'] ?? ''));
                     </div>
 
                     <div class="form-group">
-                        <label for="review_quote">Texto da avaliacao</label>
+                        <label for="review_quote">Texto da avaliação</label>
                         <textarea id="review_quote" name="review_quote" required></textarea>
                     </div>
 
                     <div class="form-actions">
-                        <button class="btn-primary" type="submit">Adicionar avaliacao</button>
+                        <button class="btn-primary" type="submit">Adicionar avaliação</button>
                     </div>
                 </form>
             </section>
 
             <section class="card">
-                <h2>Avaliacoes atuais</h2>
-                <p>Altere texto, nota e foto de cada avaliacao.</p>
+                <h2>Avaliações atuais</h2>
+                <p>Altere texto, nota e foto de cada avaliação.</p>
 
                 <div class="review-list">
                     <?php if (empty($reviews)): ?>
-                    <p>Nenhuma avaliacao cadastrada ainda.</p>
+                    <p>Nenhuma avaliação cadastrada ainda.</p>
                     <?php endif; ?>
 
                     <?php foreach ($reviews as $review): ?>
                     <article class="review-item">
-                        <form method="post" enctype="multipart/form-data" class="review-main">
+                        <form method="post" enctype="multipart/form-data" class="review-main" accept-charset="UTF-8">
                             <input type="hidden" name="action" value="update_review">
                             <input type="hidden" name="review_id" value="<?= (int)$review['id'] ?>">
                             <input type="hidden" name="current_photo_path"
@@ -651,7 +653,7 @@ $errorMessage = trim((string)($_GET['error'] ?? ''));
 
                             <div class="review-preview">
                                 <img src="<?= h(reviewPhotoForAdminPreview(normalizeReviewPhotoPath((string)($review['photo_path'] ?? '')))) ?>"
-                                    alt="Foto da avaliacao" class="review-photo-preview" loading="lazy">
+                                    alt="Foto da avaliação" class="review-photo-preview" loading="lazy">
                             </div>
 
                             <div class="review-fields">
@@ -682,18 +684,18 @@ $errorMessage = trim((string)($_GET['error'] ?? ''));
                                 </div>
 
                                 <div class="form-group">
-                                    <label>Texto da avaliacao</label>
+                                    <label>Texto da avaliação</label>
                                     <textarea name="review_quote" required><?= h((string)($review['quote'] ?? '')) ?></textarea>
                                 </div>
 
                                 <div class="form-actions">
-                                    <button class="btn-primary" type="submit">Salvar avaliacao</button>
+                                    <button class="btn-primary" type="submit">Salvar avaliação</button>
                                 </div>
                             </div>
                         </form>
 
                         <div class="service-item-actions">
-                            <form method="post" onsubmit="return confirm('Deseja remover esta avaliacao?');">
+                            <form method="post" onsubmit="return confirm('Deseja remover esta avaliação?');" accept-charset="UTF-8">
                                 <input type="hidden" name="action" value="delete_review">
                                 <input type="hidden" name="review_id" value="<?= (int)$review['id'] ?>">
                                 <button class="btn-danger" type="submit">Remover</button>
@@ -705,10 +707,10 @@ $errorMessage = trim((string)($_GET['error'] ?? ''));
             </section>
 
             <section class="card">
-                <h2>Informacoes gerais do site</h2>
-                <p>Atualize o texto sobre, horarios e telefones que aparecem na home.</p>
+                <h2>Informações gerais do site</h2>
+                <p>Atualize o texto sobre, horários e telefones que aparecem na home.</p>
 
-                <form method="post" action="">
+                <form method="post" action="" accept-charset="UTF-8">
                     <input type="hidden" name="action" value="save_settings">
 
                     <div class="form-group">
@@ -718,19 +720,19 @@ $errorMessage = trim((string)($_GET['error'] ?? ''));
 
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="weekday_hours">Horario (Segunda a Sexta)</label>
+                            <label for="weekday_hours">Horário (Segunda a Sexta)</label>
                             <input type="text" id="weekday_hours" name="weekday_hours" value="<?= h($weekdayHours) ?>"
                                 required>
                         </div>
 
                         <div class="form-group">
-                            <label for="saturday_hours">Horario (Sabado)</label>
+                            <label for="saturday_hours">Horário (Sábado)</label>
                             <input type="text" id="saturday_hours" name="saturday_hours"
                                 value="<?= h($saturdayHours) ?>" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="special_hours">Horario para dias especiais</label>
+                            <label for="special_hours">Horário para dias especiais</label>
                             <input type="text" id="special_hours" name="special_hours" value="<?= h($specialHours) ?>">
                         </div>
 
@@ -746,7 +748,7 @@ $errorMessage = trim((string)($_GET['error'] ?? ''));
                     </div>
 
                     <div class="form-actions">
-                        <button class="btn-primary" type="submit">Salvar configuracoes</button>
+                        <button class="btn-primary" type="submit">Salvar configurações</button>
                     </div>
                 </form>
             </section>

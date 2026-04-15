@@ -9,6 +9,8 @@ if (isset($_SESSION['admin_id'])) {
     exit;
 }
 
+header('Content-Type: text/html; charset=UTF-8');
+
 $conn = require __DIR__ . '/../php/db.php';
 $error = '';
 $dbError = '';
