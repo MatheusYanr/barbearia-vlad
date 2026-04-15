@@ -231,6 +231,19 @@ $whatsapp2 = whatsappLink($phone2);
         <section id="avaliacoes" class="avaliacoes" aria-labelledby="avaliacoes-titulo" data-aos="fade-up">
             <h2 id="avaliacoes-titulo">Avaliações</h2>
 
+            <?php
+            $gRating = getSetting($settings, 'google_rating', '4.9');
+            $gTotal = getSetting($settings, 'google_total_ratings', '124');
+            ?>
+            <div class="google-status" style="text-align: center; margin-bottom: 2rem; color: #f2a900; font-family: 'Playfair Display', serif;">
+                <p style="font-size: 1.5rem; margin: 0; padding-bottom: 0.3rem;">
+                    <strong>Google: <?= h($gRating) ?> ⭐</strong>
+                </p>
+                <p style="font-size: 1rem; margin: 0; color: #d4c8b8; font-family: 'Raleway', sans-serif;">
+                    Baseado em <?= h($gTotal) ?> avaliações reais
+                </p>
+            </div>
+
             <div class="film-carousel">
                 <div class="film-track" id="filmTrack">
                     <?php foreach ($reviews as $review): ?>

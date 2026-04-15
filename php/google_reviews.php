@@ -70,7 +70,7 @@ function fetchGoogleReviews(string $placeId, string $apiKey): array
     $headers = [
         'Content-Type: application/json',
         'X-Goog-Api-Key: ' . $apiKey,
-        'X-Goog-FieldMask: reviews',
+        'X-Goog-FieldMask: reviews,rating,userRatingCount',
     ];
 
     $ch = curl_init();
@@ -97,30 +97,35 @@ function fetchGoogleReviews(string $placeId, string $apiKey): array
 
     $data = json_decode((string) $response, true);
 
-    if (!is_array($data) || !isset($data['reviews'])) {
-        return ['ok' => false, 'error' => 'Resposta sem avaliações.', 'reviews' => []];
+    if (!is_array($data) || (!isset($data['reviews']) && !isset($data['rating']))) {
+        return ['ok' => false, 'error' => 'Resposta vazia ou inválida.', 'reviews' => [], 'rating' => 0.0, 'totalRatings' => 0];
     }
+
+    $googleRating = (float) ($data['rating'] ?? 0.0);
+    $googleTotalRatings = (int) ($data['userRatingCount'] ?? 0);
 
     $reviews = [];
-    foreach ($data['reviews'] as $review) {
-        $authorName = $review['authorAttribution']['displayName'] ?? 'Cliente';
-        $rating = (int) ($review['rating'] ?? 5);
-        $text = $review['originalText']['text'] ?? ($review['text']['text'] ?? '');
-        $photoUri = $review['authorAttribution']['photoUri'] ?? '';
+    if (isset($data['reviews']) && is_array($data['reviews'])) {
+        foreach ($data['reviews'] as $review) {
+            $authorName = $review['authorAttribution']['displayName'] ?? 'Cliente';
+            $rating = (int) ($review['rating'] ?? 5);
+            $text = $review['originalText']['text'] ?? ($review['text']['text'] ?? '');
+            $photoUri = $review['authorAttribution']['photoUri'] ?? '';
 
-        if (trim($text) === '') {
-            continue; // Ignora avaliações sem texto
+            if (trim($text) === '') {
+                continue; // Ignora avaliações sem texto
+            }
+
+            $reviews[] = [
+                'client_name' => $authorName,
+                'quote' => $text,
+                'rating' => $rating,
+                'photo_url' => $photoUri,
+            ];
         }
-
-        $reviews[] = [
-            'client_name' => $authorName,
-            'quote' => $text,
-            'rating' => $rating,
-            'photo_url' => $photoUri,
-        ];
     }
 
-    return ['ok' => true, 'error' => '', 'reviews' => $reviews];
+    return ['ok' => true, 'error' => '', 'reviews' => $reviews, 'rating' => $googleRating, 'totalRatings' => $googleTotalRatings];
 }
 
 /**
@@ -194,11 +199,28 @@ if (!$result['ok']) {
 $count = count($result['reviews']);
 echo "Encontradas {$count} avaliação(ões) com texto.\n";
 
-if ($count === 0) {
-    echo "Nenhuma avaliação para salvar.\n";
-    exit(0);
+if ($count > 0) {
+    $saved = saveGoogleReviews($conn, $result['reviews']);
+    echo "Salvas {$saved} avaliação(ões) no banco de dados.\n";
+} else {
+    echo "Nenhuma nova avaliação detalhada para salvar.\n";
 }
 
-$saved = saveGoogleReviews($conn, $result['reviews']);
-echo "Salvas {$saved} avaliação(ões) no banco de dados.\n";
+// Salva Status Geral
+$stmt = $conn->prepare('INSERT INTO settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)');
+if ($stmt) {
+    $k1 = 'google_rating';
+    $v1 = (string) $result['rating'];
+    $stmt->bind_param('ss', $k1, $v1);
+    $stmt->execute();
+    
+    $k2 = 'google_total_ratings';
+    $v2 = (string) $result['totalRatings'];
+    $stmt->bind_param('ss', $k2, $v2);
+    $stmt->execute();
+    $stmt->close();
+    
+    echo "Status geral atualizado: Nota {$result['rating']} / {$result['totalRatings']} totais de avaliações.\n";
+}
+
 echo "Concluído!\n";
