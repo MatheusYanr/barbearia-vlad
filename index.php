@@ -21,6 +21,30 @@ $services = [
     ['id' => 4, 'name' => 'Sobrancelha', 'price' => 10, 'is_featured' => 0],
 ];
 
+$reviews = [
+    [
+        'id' => 1,
+        'client_name' => 'Cliente',
+        'quote' => 'Otimo atendimento e servico de qualidade!',
+        'rating' => 5,
+        'photo_path' => 'img/pessoa1.jpg',
+    ],
+    [
+        'id' => 2,
+        'client_name' => 'Cliente',
+        'quote' => 'Ambiente confortavel e profissionais excelentes.',
+        'rating' => 5,
+        'photo_path' => 'img/pessoa2.jpg',
+    ],
+    [
+        'id' => 3,
+        'client_name' => 'Cliente',
+        'quote' => 'Melhor barbearia da regiao, recomendo!',
+        'rating' => 5,
+        'photo_path' => 'img/pessoa2.jpg',
+    ],
+];
+
 $settings = $defaultSettings;
 
 if ($conn instanceof mysqli) {
@@ -32,6 +56,11 @@ if ($conn instanceof mysqli) {
     $dbServices = loadServices($conn);
     if (!empty($dbServices)) {
         $services = $dbServices;
+    }
+
+    $dbReviews = loadReviews($conn);
+    if (!empty($dbReviews)) {
+        $reviews = $dbReviews;
     }
 }
 
@@ -205,35 +234,40 @@ $whatsapp2 = whatsappLink($phone2);
 
             <div class="film-carousel">
                 <div class="film-track" id="filmTrack">
-                    <figure class="avaliacao">
-                        <div class="estrelas" aria-label="Avaliacao de 5 estrelas">&#9733;&#9733;&#9733;&#9733;&#9733;
-                        </div>
-                        <blockquote>"Otimo atendimento e servico de qualidade!"</blockquote>
-                        <figcaption class="cliente-info">
-                            <img src="img/pessoa1.jpg" alt="Foto da pessoa 1" class="cliente-foto" loading="lazy">
-                            <span>- Cliente</span>
-                        </figcaption>
-                    </figure>
+                    <?php foreach ($reviews as $review): ?>
+                        <?php
+                        $reviewRating = (int)($review['rating'] ?? 5);
+                        if ($reviewRating < 1) {
+                            $reviewRating = 1;
+                        }
+                        if ($reviewRating > 5) {
+                            $reviewRating = 5;
+                        }
 
-                    <figure class="avaliacao">
-                        <div class="estrelas" aria-label="Avaliacao de 5 estrelas">&#9733;&#9733;&#9733;&#9733;&#9733;
-                        </div>
-                        <blockquote>"Ambiente confortavel e profissionais excelentes."</blockquote>
-                        <figcaption class="cliente-info">
-                            <img src="img/pessoa2.jpg" alt="Foto da pessoa 2" class="cliente-foto" loading="lazy">
-                            <span>- Cliente</span>
-                        </figcaption>
-                    </figure>
+                        $reviewClientName = trim((string)($review['client_name'] ?? 'Cliente'));
+                        if ($reviewClientName === '') {
+                            $reviewClientName = 'Cliente';
+                        }
 
-                    <figure class="avaliacao">
-                        <div class="estrelas" aria-label="Avaliacao de 5 estrelas">&#9733;&#9733;&#9733;&#9733;&#9733;
-                        </div>
-                        <blockquote>"Melhor barbearia da regiao, recomendo!"</blockquote>
-                        <figcaption class="cliente-info">
-                            <img src="img/pessoa2.jpg" alt="Foto da pessoa 2" class="cliente-foto" loading="lazy">
-                            <span>- Cliente</span>
-                        </figcaption>
-                    </figure>
+                        $reviewQuote = trim((string)($review['quote'] ?? ''));
+                        if ($reviewQuote === '') {
+                            $reviewQuote = 'Excelente atendimento!';
+                        }
+
+                        $reviewPhoto = normalizeReviewPhotoPath((string)($review['photo_path'] ?? ''));
+                        ?>
+                        <figure class="avaliacao">
+                            <div class="estrelas" aria-label="Avaliacao de <?= $reviewRating ?> estrelas">
+                                <?= str_repeat('&#9733;', $reviewRating) ?>
+                            </div>
+                            <blockquote>"<?= h($reviewQuote) ?>"</blockquote>
+                            <figcaption class="cliente-info">
+                                <img src="<?= h($reviewPhoto) ?>" alt="Foto de <?= h($reviewClientName) ?>" class="cliente-foto"
+                                    loading="lazy">
+                                <span>- <?= h($reviewClientName) ?></span>
+                            </figcaption>
+                        </figure>
+                    <?php endforeach; ?>
                 </div>
             </div>
         </section>

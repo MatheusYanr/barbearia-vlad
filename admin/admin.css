@@ -128,6 +128,7 @@ label {
 }
 
 input,
+select,
 textarea {
     width: 100%;
     background: rgba(8, 8, 8, 0.86);
@@ -140,8 +141,13 @@ textarea {
 }
 
 input:focus,
+select:focus,
 textarea:focus {
     border-color: rgba(212, 167, 92, 0.7);
+}
+
+.admin-select {
+    appearance: none;
 }
 
 textarea {
@@ -214,6 +220,43 @@ textarea {
     flex-wrap: wrap;
 }
 
+.review-list {
+    display: grid;
+    gap: 12px;
+}
+
+.review-item {
+    background: rgba(10, 10, 10, 0.7);
+    border: 1px solid rgba(212, 167, 92, 0.2);
+    border-radius: 10px;
+    padding: 12px;
+}
+
+.review-main {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+.review-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.review-photo-preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    object-fit: cover;
+    border: 1px solid rgba(212, 167, 92, 0.4);
+}
+
+.review-fields .form-actions {
+    margin-top: 12px;
+}
+
 .login-shell {
     min-height: 100vh;
     display: grid;
@@ -274,5 +317,13 @@ textarea {
 
     .service-main {
         grid-template-columns: 1fr;
+    }
+
+    .review-main {
+        grid-template-columns: 1fr;
+    }
+
+    .review-preview {
+        justify-content: flex-start;
     }
 }

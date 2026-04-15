@@ -63,6 +63,116 @@ function saveSetting(mysqli $conn, string $key, string $value): bool
     return $ok;
 }
 
+function parseRatingInput(mixed $value): int
+{
+    $rating = (int)$value;
+
+    if ($rating < 1) {
+        return 1;
+    }
+
+    if ($rating > 5) {
+        return 5;
+    }
+
+    return $rating;
+}
+
+function ensureDirectoryExists(string $dirPath): bool
+{
+    if (is_dir($dirPath)) {
+        return true;
+    }
+
+    return mkdir($dirPath, 0775, true);
+}
+
+function uploadReviewPhoto(array $file, string $absoluteUploadDir, string $relativeUploadDir): array
+{
+    if (!isset($file['error']) || (int)$file['error'] === UPLOAD_ERR_NO_FILE) {
+        return ['ok' => true, 'path' => null, 'error' => ''];
+    }
+
+    if ((int)$file['error'] !== UPLOAD_ERR_OK) {
+        return ['ok' => false, 'path' => null, 'error' => 'Erro ao enviar foto da avaliacao.'];
+    }
+
+    if (!ensureDirectoryExists($absoluteUploadDir)) {
+        return ['ok' => false, 'path' => null, 'error' => 'Nao foi possivel preparar a pasta de uploads.'];
+    }
+
+    $tmpName = (string)($file['tmp_name'] ?? '');
+    if ($tmpName === '' || !is_uploaded_file($tmpName)) {
+        return ['ok' => false, 'path' => null, 'error' => 'Arquivo de imagem invalido.'];
+    }
+
+    $maxBytes = 5 * 1024 * 1024;
+    if ((int)($file['size'] ?? 0) > $maxBytes) {
+        return ['ok' => false, 'path' => null, 'error' => 'A foto deve ter no maximo 5MB.'];
+    }
+
+    $allowedByMime = [
+        'image/jpeg' => 'jpg',
+        'image/png' => 'png',
+        'image/webp' => 'webp',
+    ];
+
+    $mimeType = '';
+    if (function_exists('mime_content_type')) {
+        $mimeType = (string)(mime_content_type($tmpName) ?: '');
+    } elseif (function_exists('finfo_open')) {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        if ($finfo !== false) {
+            $mimeType = (string)(finfo_file($finfo, $tmpName) ?: '');
+            finfo_close($finfo);
+        }
+    }
+
+    $extension = $allowedByMime[$mimeType] ?? '';
+
+    if ($extension === '') {
+        $rawExtension = strtolower(pathinfo((string)($file['name'] ?? ''), PATHINFO_EXTENSION));
+        if ($rawExtension === 'jpeg') {
+            $rawExtension = 'jpg';
+        }
+
+        if (in_array($rawExtension, ['jpg', 'png', 'webp'], true)) {
+            $extension = $rawExtension;
+        }
+    }
+
+    if ($extension === '') {
+        return ['ok' => false, 'path' => null, 'error' => 'Formato de imagem invalido. Use JPG, PNG ou WEBP.'];
+    }
+
+    try {
+        $random = bin2hex(random_bytes(4));
+    } catch (Throwable) {
+        $random = (string)mt_rand(1000, 9999);
+    }
+
+    $newFileName = 'avaliacao_' . date('Ymd_His') . '_' . $random . '.' . $extension;
+    $targetAbsolutePath = $absoluteUploadDir . DIRECTORY_SEPARATOR . $newFileName;
+
+    if (!move_uploaded_file($tmpName, $targetAbsolutePath)) {
+        return ['ok' => false, 'path' => null, 'error' => 'Nao foi possivel salvar a foto no servidor.'];
+    }
+
+    return ['ok' => true, 'path' => $relativeUploadDir . '/' . $newFileName, 'error' => ''];
+}
+
+function reviewPhotoForAdminPreview(string $photoPath): string
+{
+    if (preg_match('/^https?:\/\//i', $photoPath) === 1) {
+        return $photoPath;
+    }
+
+    return '../' . ltrim($photoPath, '/');
+}
+
+$reviewUploadAbsoluteDir = __DIR__ . '/../img/avaliacoes';
+$reviewUploadRelativeDir = 'img/avaliacoes';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = (string)($_POST['action'] ?? '');
 
@@ -167,6 +277,136 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirectPanel('ok', 'Servico removido com sucesso.');
     }
 
+    if ($action === 'add_review') {
+        $clientName = trim((string)($_POST['review_client_name'] ?? ''));
+        $quote = trim((string)($_POST['review_quote'] ?? ''));
+        $rating = parseRatingInput($_POST['review_rating'] ?? 5);
+
+        if ($clientName === '') {
+            $clientName = 'Cliente';
+        }
+
+        if ($quote === '') {
+            redirectPanel('error', 'Informe o texto da avaliacao.');
+        }
+
+        $uploadResult = uploadReviewPhoto(
+            $_FILES['review_photo'] ?? [],
+            $reviewUploadAbsoluteDir,
+            $reviewUploadRelativeDir
+        );
+
+        if (!$uploadResult['ok']) {
+            redirectPanel('error', (string)$uploadResult['error']);
+        }
+
+        $photoPath = (string)($uploadResult['path'] ?? '');
+        if ($photoPath === '') {
+            $photoPath = 'img/pessoa1.jpg';
+        }
+
+        $nextOrder = 1;
+        $orderResult = $conn->query('SELECT COALESCE(MAX(sort_order), 0) + 1 AS next_order FROM reviews');
+        if ($orderResult instanceof mysqli_result) {
+            $nextOrder = (int)($orderResult->fetch_assoc()['next_order'] ?? 1);
+            $orderResult->free();
+        }
+
+        $nextId = 1;
+        $idResult = $conn->query('SELECT COALESCE(MAX(id), 0) + 1 AS next_id FROM reviews');
+        if ($idResult instanceof mysqli_result) {
+            $nextId = (int)($idResult->fetch_assoc()['next_id'] ?? 1);
+            $idResult->free();
+        }
+
+        $stmt = $conn->prepare(
+            'INSERT INTO reviews (id, client_name, quote, rating, photo_path, sort_order, is_active)
+             VALUES (?, ?, ?, ?, ?, ?, 1)'
+        );
+        if (!$stmt) {
+            redirectPanel('error', 'Nao foi possivel cadastrar a avaliacao.');
+        }
+
+        $stmt->bind_param('issisi', $nextId, $clientName, $quote, $rating, $photoPath, $nextOrder);
+        $ok = $stmt->execute();
+        $stmt->close();
+
+        if (!$ok) {
+            redirectPanel('error', 'Erro ao salvar avaliacao no banco.');
+        }
+
+        redirectPanel('ok', 'Avaliacao adicionada com sucesso.');
+    }
+
+    if ($action === 'update_review') {
+        $reviewId = (int)($_POST['review_id'] ?? 0);
+        $clientName = trim((string)($_POST['review_client_name'] ?? ''));
+        $quote = trim((string)($_POST['review_quote'] ?? ''));
+        $rating = parseRatingInput($_POST['review_rating'] ?? 5);
+        $currentPhotoPath = normalizeReviewPhotoPath((string)($_POST['current_photo_path'] ?? 'img/pessoa1.jpg'));
+
+        if ($reviewId <= 0 || $quote === '') {
+            redirectPanel('error', 'Preencha corretamente os dados da avaliacao para atualizar.');
+        }
+
+        if ($clientName === '') {
+            $clientName = 'Cliente';
+        }
+
+        $uploadResult = uploadReviewPhoto(
+            $_FILES['review_photo'] ?? [],
+            $reviewUploadAbsoluteDir,
+            $reviewUploadRelativeDir
+        );
+
+        if (!$uploadResult['ok']) {
+            redirectPanel('error', (string)$uploadResult['error']);
+        }
+
+        $photoPath = $currentPhotoPath;
+        if (!empty($uploadResult['path'])) {
+            $photoPath = (string)$uploadResult['path'];
+        }
+
+        $stmt = $conn->prepare('UPDATE reviews SET client_name = ?, quote = ?, rating = ?, photo_path = ? WHERE id = ?');
+        if (!$stmt) {
+            redirectPanel('error', 'Nao foi possivel atualizar a avaliacao.');
+        }
+
+        $stmt->bind_param('ssisi', $clientName, $quote, $rating, $photoPath, $reviewId);
+        $ok = $stmt->execute();
+        $stmt->close();
+
+        if (!$ok) {
+            redirectPanel('error', 'Erro ao atualizar a avaliacao.');
+        }
+
+        redirectPanel('ok', 'Avaliacao atualizada com sucesso.');
+    }
+
+    if ($action === 'delete_review') {
+        $reviewId = (int)($_POST['review_id'] ?? 0);
+
+        if ($reviewId <= 0) {
+            redirectPanel('error', 'Avaliacao invalida para exclusao.');
+        }
+
+        $stmt = $conn->prepare('DELETE FROM reviews WHERE id = ?');
+        if (!$stmt) {
+            redirectPanel('error', 'Nao foi possivel remover a avaliacao.');
+        }
+
+        $stmt->bind_param('i', $reviewId);
+        $ok = $stmt->execute();
+        $stmt->close();
+
+        if (!$ok) {
+            redirectPanel('error', 'Erro ao remover a avaliacao.');
+        }
+
+        redirectPanel('ok', 'Avaliacao removida com sucesso.');
+    }
+
     if ($action === 'save_settings') {
         $fields = [
             'about_text' => (string)($_POST['about_text'] ?? ''),
@@ -189,6 +429,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $settings = loadSettings($conn);
 $services = loadServices($conn);
+$reviews = loadReviews($conn);
 
 $aboutText = getSetting($settings, 'about_text', '');
 $weekdayHours = getSetting($settings, 'weekday_hours', '');
@@ -307,6 +548,119 @@ $errorMessage = trim((string)($_GET['error'] ?? ''));
                             <form method="post" onsubmit="return confirm('Deseja remover este servico?');">
                                 <input type="hidden" name="action" value="delete_service">
                                 <input type="hidden" name="service_id" value="<?= (int)$service['id'] ?>">
+                                <button class="btn-danger" type="submit">Remover</button>
+                            </form>
+                        </div>
+                    </article>
+                    <?php endforeach; ?>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>Adicionar nova avaliacao</h2>
+                <p>Cadastre o texto da avaliacao, nota e foto do cliente.</p>
+
+                <form method="post" action="" enctype="multipart/form-data">
+                    <input type="hidden" name="action" value="add_review">
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="review_client_name">Nome do cliente</label>
+                            <input type="text" id="review_client_name" name="review_client_name" placeholder="Ex: Matheus">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="review_rating">Nota</label>
+                            <select id="review_rating" name="review_rating" class="admin-select">
+                                <option value="5">5 estrelas</option>
+                                <option value="4">4 estrelas</option>
+                                <option value="3">3 estrelas</option>
+                                <option value="2">2 estrelas</option>
+                                <option value="1">1 estrela</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="review_photo">Foto (JPG, PNG ou WEBP)</label>
+                            <input type="file" id="review_photo" name="review_photo" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="review_quote">Texto da avaliacao</label>
+                        <textarea id="review_quote" name="review_quote" required></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button class="btn-primary" type="submit">Adicionar avaliacao</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="card">
+                <h2>Avaliacoes atuais</h2>
+                <p>Altere texto, nota e foto de cada avaliacao.</p>
+
+                <div class="review-list">
+                    <?php if (empty($reviews)): ?>
+                    <p>Nenhuma avaliacao cadastrada ainda.</p>
+                    <?php endif; ?>
+
+                    <?php foreach ($reviews as $review): ?>
+                    <article class="review-item">
+                        <form method="post" enctype="multipart/form-data" class="review-main">
+                            <input type="hidden" name="action" value="update_review">
+                            <input type="hidden" name="review_id" value="<?= (int)$review['id'] ?>">
+                            <input type="hidden" name="current_photo_path"
+                                value="<?= h(normalizeReviewPhotoPath((string)($review['photo_path'] ?? ''))) ?>">
+
+                            <div class="review-preview">
+                                <img src="<?= h(reviewPhotoForAdminPreview(normalizeReviewPhotoPath((string)($review['photo_path'] ?? '')))) ?>"
+                                    alt="Foto da avaliacao" class="review-photo-preview" loading="lazy">
+                            </div>
+
+                            <div class="review-fields">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label>Nome do cliente</label>
+                                        <input type="text" name="review_client_name"
+                                            value="<?= h((string)($review['client_name'] ?? 'Cliente')) ?>">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Nota</label>
+                                        <?php $reviewRating = (int)($review['rating'] ?? 5); ?>
+                                        <select name="review_rating" class="admin-select">
+                                            <option value="5" <?= $reviewRating === 5 ? 'selected' : '' ?>>5 estrelas</option>
+                                            <option value="4" <?= $reviewRating === 4 ? 'selected' : '' ?>>4 estrelas</option>
+                                            <option value="3" <?= $reviewRating === 3 ? 'selected' : '' ?>>3 estrelas</option>
+                                            <option value="2" <?= $reviewRating === 2 ? 'selected' : '' ?>>2 estrelas</option>
+                                            <option value="1" <?= $reviewRating === 1 ? 'selected' : '' ?>>1 estrela</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Trocar foto</label>
+                                        <input type="file" name="review_photo"
+                                            accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Texto da avaliacao</label>
+                                    <textarea name="review_quote" required><?= h((string)($review['quote'] ?? '')) ?></textarea>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button class="btn-primary" type="submit">Salvar avaliacao</button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="service-item-actions">
+                            <form method="post" onsubmit="return confirm('Deseja remover esta avaliacao?');">
+                                <input type="hidden" name="action" value="delete_review">
+                                <input type="hidden" name="review_id" value="<?= (int)$review['id'] ?>">
                                 <button class="btn-danger" type="submit">Remover</button>
                             </form>
                         </div>

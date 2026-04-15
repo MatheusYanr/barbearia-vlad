@@ -1,4 +1,4 @@
 {
-    "mssql.intelliSense.enableErrorChecking": false,
-    "mssql.intelliSense.enableIntelliSense": false
+  "mssql.intelliSense.enableErrorChecking": false,
+  "mssql.intelliSense.enableIntelliSense": false
 }
