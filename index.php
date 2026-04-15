@@ -284,12 +284,10 @@ $whatsapp2 = whatsappLink($phone2);
             </div>
 
             <div class="google-review-actions" style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap;">
-                <a href="#" target="_blank" rel="noopener noreferrer" style="background-color: #f2a900; color: #1a1a1a; padding: 0.8rem 1.5rem; text-decoration: none; border-radius: 5px; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.3);" onmouseover="this.style.backgroundColor='#d19200'" onmouseout="this.style.backgroundColor='#f2a900'">
-                    <!-- INSERIR LINK DO GOOGLE AQUI -->
+                <a href="https://www.google.com/search?sca_esv=55e9f3c856495c1e&sxsrf=ANbL-n6E5Snapkyp90sP6ftW-z4n5mxkBg:1776279545357&si=AL3DRZEsmMGCryMMFSHJ3StBhOdZ2-6yYkXd_doETEE1OR-qOUZUn3xWmF60iy-NIAzl8mmrs919Dnhtc2-o8hYHfKuk5fQAteuYZGJFM16dNlH153u__Mtt2A89oKOnFXQSCNCyrMuzk9ZPI5u_TlCieco7HBYJbg%3D%3D&q=Barbearia+Vlad+Coment%C3%A1rios&sa=X&ved=2ahUKEwi3lMr6xPCTAxUeIrkGHWEWOt0Q0bkNegQIIRAF&biw=1920&bih=836&dpr=1#lrd=0x952749ab569c7c5f:0x2caa2da2126fadde,3,,,," target="_blank" rel="noopener noreferrer" style="background-color: #f2a900; color: #1a1a1a; padding: 0.8rem 1.5rem; text-decoration: none; border-radius: 5px; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.3);" onmouseover="this.style.backgroundColor='#d19200'" onmouseout="this.style.backgroundColor='#f2a900'">
                     Adicionar avaliação
                 </a>
-                <a href="#" target="_blank" rel="noopener noreferrer" style="background-color: transparent; color: #f2a900; border: 2px solid #f2a900; padding: 0.8rem 1.5rem; text-decoration: none; border-radius: 5px; font-weight: bold; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='rgba(242, 169, 0, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
-                    <!-- INSERIR LINK DO GOOGLE AQUI -->
+                <a href="https://www.google.com/search?sca_esv=55e9f3c856495c1e&sxsrf=ANbL-n6E5Snapkyp90sP6ftW-z4n5mxkBg:1776279545357&si=AL3DRZEsmMGCryMMFSHJ3StBhOdZ2-6yYkXd_doETEE1OR-qOUZUn3xWmF60iy-NIAzl8mmrs919Dnhtc2-o8hYHfKuk5fQAteuYZGJFM16dNlH153u__Mtt2A89oKOnFXQSCNCyrMuzk9ZPI5u_TlCieco7HBYJbg%3D%3D&q=Barbearia+Vlad+Coment%C3%A1rios&sa=X&ved=2ahUKEwi3lMr6xPCTAxUeIrkGHWEWOt0Q0bkNegQIIRAF&biw=1920&bih=836&dpr=1#lrd=" target="_blank" rel="noopener noreferrer" style="background-color: transparent; color: #f2a900; border: 2px solid #f2a900; padding: 0.8rem 1.5rem; text-decoration: none; border-radius: 5px; font-weight: bold; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='rgba(242, 169, 0, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
                     Visualizar mais avaliações
                 </a>
             </div>
