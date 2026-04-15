@@ -170,16 +170,5 @@ Recomendação acadêmica e profissional:
 - Separação de responsabilidades entre conexão, utilitários, frontend e backend administrativo.
 - Fallback de conteúdo no frontend para tolerância a falhas de banco.
 
-## 12. Limites e Melhorias Futuras
-Limitações atuais:
-- Não há ordenação manual de avaliações via interface.
-- Não há rotação de logs administrativos.
-- Não há recuperação de senha por email.
-
-Melhorias recomendadas:
-- Implementar ordenação de reviews por arrastar e soltar ou controles de subida/descida.
-- Registrar auditoria de alterações administrativas.
-- Introduzir variáveis de ambiente para segredos em vez de credenciais hardcoded.
-
-## 13. Conclusão
+## 12. Conclusão
 O sistema atende aos requisitos funcionais definidos para um projeto institucional com painel administrativo simples, mantendo coerência entre modelagem de dados, regras de negócio e interface. A implementação privilegia clareza didática e manutenção direta, sendo apropriada para contexto acadêmico e para implantação em hospedagem compartilhada com PHP e MySQL.
