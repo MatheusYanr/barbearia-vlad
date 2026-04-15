@@ -1,0 +1,323 @@
+<?php
+
+declare(strict_types=1);
+
+require_once __DIR__ . '/php/helpers.php';
+$conn = require __DIR__ . '/php/db.php';
+
+$defaultSettings = [
+    'about_text' => 'Nosso objetivo e proporcionar uma experiencia unica, combinando tecnicas tradicionais com tendencias atuais, sempre com conforto e qualidade.',
+    'weekday_hours' => 'Segunda a Sexta - 9h as 12h e das 13h30 as 19h30',
+    'saturday_hours' => 'Sabados - 9h as 12h e das 13h30 as 17h',
+    'special_hours' => 'Feriados e dias especiais: consulte no WhatsApp.',
+    'phone_1' => '(48) 98494-0065',
+    'phone_2' => '(48) 93380-2543',
+];
+
+$services = [
+    ['id' => 1, 'name' => 'Corte de Cabelo', 'price' => 35, 'is_featured' => 0],
+    ['id' => 2, 'name' => 'Barba Simples', 'price' => 25, 'is_featured' => 0],
+    ['id' => 3, 'name' => 'Combo (Corte + Barba)', 'price' => 55, 'is_featured' => 1],
+    ['id' => 4, 'name' => 'Sobrancelha', 'price' => 10, 'is_featured' => 0],
+];
+
+$settings = $defaultSettings;
+
+if ($conn instanceof mysqli) {
+    $dbSettings = loadSettings($conn);
+    if (!empty($dbSettings)) {
+        $settings = array_merge($settings, $dbSettings);
+    }
+
+    $dbServices = loadServices($conn);
+    if (!empty($dbServices)) {
+        $services = $dbServices;
+    }
+}
+
+$aboutText = getSetting($settings, 'about_text', $defaultSettings['about_text']);
+$weekdayHours = getSetting($settings, 'weekday_hours', $defaultSettings['weekday_hours']);
+$saturdayHours = getSetting($settings, 'saturday_hours', $defaultSettings['saturday_hours']);
+$specialHours = getSetting($settings, 'special_hours', $defaultSettings['special_hours']);
+$phone1 = getSetting($settings, 'phone_1', $defaultSettings['phone_1']);
+$phone2 = getSetting($settings, 'phone_2', $defaultSettings['phone_2']);
+
+$whatsapp1 = whatsappLink($phone1);
+$whatsapp2 = whatsappLink($phone2);
+?>
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Barbearia Vlad - Cortes sociais, degradês, barba e estetica masculina. Proporcionamos uma experiencia unica com conforto e excelencia.">
+    <meta name="keywords" content="barbearia, corte de cabelo, barba, Vlad, salao masculino">
+    <title>Barbearia Vlad - Cortes, Barba e Estilo</title>
+
+    <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
+    <link rel="shortcut icon" href="img/favicon.svg" type="image/svg+xml">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Outfit:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=2">
+</head>
+
+<body>
+
+    <header class="topo" role="banner">
+        <a href="#call-to-action" id="logo" class="logo" aria-label="Ir para o inicio da pagina">BARBEARIA VLAD</a>
+
+        <button id="btnMobile" aria-label="Abrir menu" aria-haspopup="true" aria-controls="menu" aria-expanded="false">
+            <span class="hamburger"></span>
+        </button>
+
+        <nav id="menu" class="menu" aria-label="Navegacao Principal">
+            <a href="#call-to-action" class="menu-link">Inicio</a>
+            <a href="#sobre" class="menu-link">Sobre</a>
+            <a href="#precos" class="menu-link">Precos</a>
+            <a href="#equipe" class="menu-link">Equipe</a>
+            <a href="#localizacao" class="menu-link">Localizacao</a>
+            <a href="#avaliacoes" class="menu-link">Avaliacoes</a>
+        </nav>
+    </header>
+
+    <main role="main">
+
+        <section id="call-to-action" class="banner" aria-labelledby="banner-titulo">
+            <img id="cta-img" src="img/bastao-barbearia.jpg"
+                alt="Interior escuro focado no classico de uma Barbearia moderna" loading="lazy">
+
+            <div class="banner-left" data-aos="fade-right">
+                <h1 id="banner-titulo">BARBEARIA</h1>
+                <h2>VLAD</h2>
+                <div class="linha" aria-hidden="true"></div>
+                <a href="<?= h($whatsapp2) ?>" class="btn" aria-label="Agendar via WhatsApp">WhatsApp</a>
+            </div>
+
+            <div class="banner-center" data-aos="fade-left">
+                <h3>Horarios</h3>
+                <p><?= h($weekdayHours) ?></p>
+                <p><?= h($saturdayHours) ?></p>
+                <p class="horario-especial"><?= h($specialHours) ?></p>
+            </div>
+        </section>
+
+        <section id="sobre" class="sobre" aria-labelledby="sobre-titulo">
+            <article class="sobre-container" data-aos="fade-up">
+                <figure class="sobre-img">
+                    <div class="img-placeholder">
+                        <img src="img/about-us.jpg"
+                            alt="Equipe de barbeiros cuidando rigorosamente do cabelo dos clientes" loading="lazy">
+                    </div>
+                </figure>
+                <div class="sobre-texto">
+                    <h2 id="sobre-titulo">Sobre Nos</h2>
+                    <p><?= nl2br(h($aboutText)) ?></p>
+                </div>
+            </article>
+        </section>
+
+        <section id="precos" class="precos" aria-labelledby="precos-titulo">
+            <div class="precos-wrapper" data-aos="fade-up">
+                <h2 id="precos-titulo">Servicos e Precos</h2>
+                <p class="precos-descricao">Valores atualizados direto pelo painel administrativo.</p>
+
+                <div class="precos-lista">
+                    <?php foreach ($services as $service): ?>
+                        <article class="preco-item<?= (int) $service['is_featured'] === 1 ? ' destaque' : '' ?>">
+                            <?php if ((int) $service['is_featured'] === 1): ?>
+                                <span class="preco-badge">Mais pedido</span>
+                            <?php endif; ?>
+
+                            <h3 class="preco-nome"><?= h((string) $service['name']) ?></h3>
+                            <span class="preco-linha" aria-hidden="true"></span>
+                            <strong class="preco-valor"><?= h(formatPriceBR((float) $service['price'])) ?></strong>
+                        </article>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </section>
+
+        <section id="equipe" class="equipe" aria-labelledby="equipe-titulo">
+            <header class="equipe-topo" data-aos="fade-up">
+                <h2 id="equipe-titulo">Nossa Equipe</h2>
+                <hr class="linha" aria-hidden="true">
+            </header>
+            <div class="equipe-container">
+                <article class="membro" data-aos="flip-left" data-aos-delay="100">
+                    <h3>Vladimir</h3>
+                    <p>
+                        <a href="<?= h($whatsapp1) ?>" target="_blank" class="wpp-contato"
+                            aria-label="Enviar mensagem para o Barbeiro Vladimir no WhatsApp">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+                                alt="Icone Oficial do WhatsApp" class="wpp-icon" loading="lazy">
+                            <?= h($phone1) ?>
+                        </a>
+                    </p>
+                </article>
+                <article class="membro" data-aos="flip-right" data-aos-delay="200">
+                    <h3>Junior</h3>
+                    <p>
+                        <a href="<?= h($whatsapp2) ?>" target="_blank" class="wpp-contato"
+                            aria-label="Enviar mensagem para o Barbeiro Junior no WhatsApp">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+                                alt="Icone Oficial do WhatsApp" class="wpp-icon" loading="lazy">
+                            <?= h($phone2) ?>
+                        </a>
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section id="localizacao" class="localizacao" aria-labelledby="localizacao-titulo">
+            <div class="localizacao-container">
+                <div class="localizacao-texto" data-aos="fade-right">
+                    <h2 id="localizacao-titulo">Onde Atendemos</h2>
+                    <p>Venha nos visitar! Estamos localizados num ponto estrategico e de facil acesso para melhor lhe
+                        atender.</p>
+                    <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="svg-icon-inline" aria-hidden="true">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg> <strong>Endereco:</strong> Rua Otto Julio Malina, 767 - Bairro Ipiranga<br>Sao Jose / SC
+                    </p>
+                </div>
+                <div class="localizacao-mapa" data-aos="fade-left">
+                    <iframe title="Mapa de localizacao interativo da barbearia pelo Google Maps"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3536.967103636885!2d-48.62273730000001!3d-27.5635314!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x952749ab569c7c5f%3A0x2caa2da2126fadde!2sBarbearia%20Vlad!5e0!3m2!1spt-BR!2sbr!4v1776116414677!5m2!1spt-BR!2sbr"
+                        width="100%" height="300"
+                        style="border:0; border-radius:15px; box-shadow: 0 6px 18px rgba(0,0,0,0.45);"
+                        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+        </section>
+
+        <section id="avaliacoes" class="avaliacoes" aria-labelledby="avaliacoes-titulo" data-aos="fade-up">
+            <h2 id="avaliacoes-titulo">Avaliacoes</h2>
+
+            <div class="film-carousel">
+                <div class="film-track" id="filmTrack">
+                    <figure class="avaliacao">
+                        <div class="estrelas" aria-label="Avaliacao de 5 estrelas">&#9733;&#9733;&#9733;&#9733;&#9733;
+                        </div>
+                        <blockquote>"Otimo atendimento e servico de qualidade!"</blockquote>
+                        <figcaption class="cliente-info">
+                            <img src="img/pessoa1.jpg" alt="Foto da pessoa 1" class="cliente-foto" loading="lazy">
+                            <span>- Cliente</span>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="avaliacao">
+                        <div class="estrelas" aria-label="Avaliacao de 5 estrelas">&#9733;&#9733;&#9733;&#9733;&#9733;
+                        </div>
+                        <blockquote>"Ambiente confortavel e profissionais excelentes."</blockquote>
+                        <figcaption class="cliente-info">
+                            <img src="img/pessoa2.jpg" alt="Foto da pessoa 2" class="cliente-foto" loading="lazy">
+                            <span>- Cliente</span>
+                        </figcaption>
+                    </figure>
+
+                    <figure class="avaliacao">
+                        <div class="estrelas" aria-label="Avaliacao de 5 estrelas">&#9733;&#9733;&#9733;&#9733;&#9733;
+                        </div>
+                        <blockquote>"Melhor barbearia da regiao, recomendo!"</blockquote>
+                        <figcaption class="cliente-info">
+                            <img src="img/pessoa2.jpg" alt="Foto da pessoa 2" class="cliente-foto" loading="lazy">
+                            <span>- Cliente</span>
+                        </figcaption>
+                    </figure>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="rodape" role="contentinfo" data-aos="fade-up">
+        <div class="rodape-container">
+            <div class="rodape-coluna logo-coluna">
+                <h2 class="rodape-logo">BARBEARIA VLAD</h2>
+                <p>A experiencia de barbearia mais tradicional da sua regiao. Cortes modernos e um ambiente pensado para
+                    o
+                    homem contemporaneo.</p>
+            </div>
+            <div class="rodape-coluna">
+                <h3>Visite-nos</h3>
+                <p>Rua Otto Julio Malina, 767</p>
+                <p>Bairro Ipiranga</p>
+                <p>Sao Jose / SC</p>
+            </div>
+            <div class="rodape-coluna">
+                <h3>Contato</h3>
+                <p><?= h($phone1) ?></p>
+                <p><?= h($phone2) ?></p>
+                <p><a class="admin-link" href="admin/login.php">Painel administrativo</a></p>
+            </div>
+            <div class="rodape-coluna">
+                <h3>Horarios</h3>
+                <p><?= h($weekdayHours) ?></p>
+                <p><?= h($saturdayHours) ?></p>
+                <p><?= h($specialHours) ?></p>
+            </div>
+        </div>
+        <div class="rodape-bottom">
+            <p>&copy; 2026 Barbearia Vlad - Todos os direitos reservados</p>
+        </div>
+    </footer>
+
+    <script>
+        const btnMobile = document.getElementById('btnMobile');
+        const menu = document.getElementById('menu');
+        const menuLinks = document.querySelectorAll('.menu-link');
+
+        function toggleMenu(event) {
+            if (event.type === 'touchstart') event.preventDefault();
+            menu.classList.toggle('active');
+            btnMobile.classList.toggle('active');
+            const active = menu.classList.contains('active');
+            btnMobile.setAttribute('aria-expanded', active);
+        }
+
+        btnMobile.addEventListener('click', toggleMenu);
+        btnMobile.addEventListener('touchstart', toggleMenu);
+
+        menuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (menu.classList.contains('active')) {
+                    menu.classList.remove('active');
+                    btnMobile.classList.remove('active');
+                    btnMobile.setAttribute('aria-expanded', 'false');
+                }
+            });
+        });
+
+        const filmTrack = document.getElementById('filmTrack');
+        if (filmTrack) {
+            const conteudos = Array.from(filmTrack.children);
+            conteudos.forEach(item => {
+                const clone = item.cloneNode(true);
+                clone.setAttribute('aria-hidden', 'true');
+                filmTrack.appendChild(clone);
+            });
+        }
+    </script>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 950,
+            once: true,
+            offset: 75,
+            easing: 'ease-out-cubic'
+        });
+    </script>
+</body>
+
+</html>

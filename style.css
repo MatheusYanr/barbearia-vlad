@@ -3,63 +3,94 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Arial', serif;
+}
+
+:root {
+    --bg-main: #090909;
+    --bg-soft: #14110d;
+    --bg-card: rgba(22, 21, 18, 0.85);
+    --bg-card-strong: rgba(18, 17, 14, 0.95);
+    --gold: #d4a75c;
+    --gold-strong: #f0c66f;
+    --text: #f4f4f4;
+    --text-soft: #cbc7c0;
+    --line: rgba(212, 167, 92, 0.32);
+    --shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    --radius: 14px;
+    --ease: 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
 html {
     scroll-behavior: smooth;
-    scroll-padding-top: 100px;
+    scroll-padding-top: 95px;
 }
-
-/* BODY */
 
 body {
-    background-color: #111;
+    font-family: 'Outfit', sans-serif;
+    color: var(--text);
+    background:
+        radial-gradient(circle at 12% 18%, rgba(212, 167, 92, 0.12), transparent 36%),
+        radial-gradient(circle at 85% 8%, rgba(212, 167, 92, 0.08), transparent 32%),
+        linear-gradient(160deg, #0a0a0a 0%, #11100d 45%, #18130c 100%);
+    min-height: 100vh;
+    position: relative;
 }
 
-/* GLOBAIS - ICONS SVG NATIVOS */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: url('img/ferramentas-barbeiro.jpg') center/cover no-repeat;
+    opacity: 0.06;
+    pointer-events: none;
+    z-index: -1;
+}
+
+h1,
+h2,
+h3,
+.rodape-logo,
+.logo {
+    font-family: 'Playfair Display', serif;
+}
+
+section {
+    position: relative;
+}
+
 .svg-icon {
-    stroke: #d4a75c;
+    stroke: var(--gold);
     margin: 0 auto 15px;
     display: block;
 }
 
 .svg-icon-inline {
-    stroke: #d4a75c;
+    stroke: var(--gold);
     vertical-align: middle;
     margin-right: 8px;
 }
 
-
-
-
 /* TOPO */
-
 .topo {
-
-    background: #341d08;
-
+    background: rgba(16, 14, 11, 0.86);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
-
     padding: 15px 40px;
-
 }
-
-
-/* LOGO */
 
 .logo {
-
-    color: #daa520;
-    font-weight: bold;
-
+    color: var(--gold-strong);
+    text-decoration: none;
+    font-size: 26px;
+    letter-spacing: 0.5px;
+    font-weight: 700;
 }
-
-/* MENU */
 
 .menu {
     display: flex;
@@ -67,18 +98,18 @@ body {
 }
 
 .menu a {
-    color: #F5F5F5;
+    color: var(--text);
     text-decoration: none;
-    font-weight: bold;
-    transition: opacity 0.3s ease;
+    font-weight: 500;
+    transition: color var(--ease), transform var(--ease);
     margin-left: 20px;
 }
 
 .menu a:hover {
-    opacity: 0.7;
+    color: var(--gold-strong);
+    transform: translateY(-1px);
 }
 
-/* JS HAMBURGER */
 #btnMobile {
     display: none;
     background: none;
@@ -91,9 +122,9 @@ body {
     display: block;
     width: 28px;
     height: 3px;
-    background: #d4a75c;
+    background: var(--gold);
     position: relative;
-    transition: all 0.3s ease;
+    transition: all var(--ease);
 }
 
 .hamburger::before,
@@ -102,9 +133,9 @@ body {
     position: absolute;
     width: 100%;
     height: 100%;
-    background: #d4a75c;
+    background: var(--gold);
     left: 0;
-    transition: all 0.3s ease;
+    transition: all var(--ease);
 }
 
 .hamburger::before {
@@ -129,25 +160,23 @@ body {
     top: 0;
 }
 
-
-
 /* BANNER */
-
 .banner {
-
-    height: 90vh;
-
+    min-height: 88vh;
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
-
-    padding: 20px;
-
+    gap: 24px;
+    padding: 20px 40px;
     position: relative;
     overflow: hidden;
+}
 
+.banner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.24));
 }
 
 #cta-img {
@@ -158,89 +187,65 @@ body {
     top: 0;
     left: 0;
     z-index: -1;
-    filter: brightness(20%);
-    opacity: 0.9;
+    filter: brightness(0.45);
 }
 
-
-/* TEXTO ESQUERDA */
+.banner-left,
+.banner-center {
+    position: relative;
+    z-index: 1;
+}
 
 .banner-left {
-
-    color: #daa520;
-    margin-left: 70px;
+    color: var(--gold-strong);
+    margin-left: 40px;
 }
 
-
-.banner-left h1 {
-
-    font-size: 60px;
+.banner-left h1,
+.banner-left h2 {
+    font-size: clamp(40px, 6vw, 68px);
+    line-height: 0.95;
 }
-
 
 .banner-left h2 {
-
-    font-size: 60px;
     margin-bottom: 10px;
-
 }
-
-
-
-/* LINHA */
 
 .linha {
-
     width: 200px;
-
-    height: 3px;
-
-    background: #d4a75c;
-
+    height: 2px;
+    background: var(--gold);
     margin: 15px 0;
-
     border: none;
-
 }
-
-
-
-/* BOTÃO */
 
 .btn {
-
     display: inline-block;
-
-    background: #341d08;
-
-    color: #f5f5f5;
-
+    background: rgba(52, 29, 8, 0.85);
+    color: var(--text);
     padding: 10px 25px;
-
     text-decoration: none;
-
-    border-radius: 5px;
-
+    border: 1px solid rgba(212, 167, 92, 0.4);
+    border-radius: 8px;
     margin-top: 10px;
-
+    transition: transform var(--ease), background-color var(--ease), border-color var(--ease);
 }
-
-
 
 .btn:hover {
-
-    opacity: 0.8;
-    background-color: #411f07;
-
+    transform: translateY(-2px);
+    background-color: rgba(73, 38, 12, 0.95);
+    border-color: rgba(212, 167, 92, 0.75);
 }
 
-
-
-/* LADO CENTRO/DIREITO */
 .banner-center {
-    color: #d4a75c;
+    color: var(--gold-strong);
     text-align: center;
-    margin-right: 80px;
+    margin-right: 20px;
+    background: rgba(10, 10, 10, 0.45);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 18px 16px;
+    max-width: 460px;
 }
 
 .banner-center h3 {
@@ -249,242 +254,300 @@ body {
 
 .banner-center p {
     margin-bottom: 5px;
+    color: var(--text);
 }
 
-
-
-/* SOBRE NÓS */
-
-.sobre {
-
-    background: #1a1a1a;
-
-    padding: 60px 40px;
-
+.banner-center .horario-especial {
+    color: var(--gold);
+    font-size: 14px;
+    margin-top: 10px;
 }
 
+/* BLOCOS BASE */
+.sobre,
+.servicos,
+.precos,
+.equipe,
+.localizacao,
+.avaliacoes,
+.rodape {
+    padding: 70px 40px;
+}
 
+.sobre,
+.localizacao {
+    background: rgba(14, 14, 13, 0.72);
+}
 
-/* ALINHAMENTO RESPONSIVO: Flex-wrap quebra os blocos para a linha debaixo caso não caibam de lado na tela! */
-.sobre-container {
+.servicos,
+.avaliacoes {
+    background: rgba(11, 11, 11, 0.88);
+}
+
+.equipe {
+    background: linear-gradient(180deg, rgba(34, 24, 15, 0.85), rgba(22, 15, 10, 0.88));
+}
+
+/* SOBRE */
+.sobre-container,
+.localizacao-container {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     gap: 40px;
-    max-width: 1000px;
+    max-width: 1060px;
     margin: auto;
 }
 
 .sobre-img,
-.sobre-texto {
-    flex: 1 1 400px;
+.sobre-texto,
+.localizacao-texto,
+.localizacao-mapa {
+    flex: 1 1 420px;
 }
-
-@media (max-width: 768px) {
-    .sobre-container {
-        text-align: center;
-    }
-}
-
-
-
-/* IMAGEM (placeholder) */
 
 .img-placeholder {
     width: 100%;
-    max-width: 400px;
+    max-width: 420px;
     aspect-ratio: 1 / 1;
-    height: auto;
     margin: 0 auto;
-    background: #333;
-    border-radius: 15px;
+    border-radius: var(--radius);
     overflow: hidden;
+    box-shadow: var(--shadow);
 }
 
 .img-placeholder img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 15px;
-    filter: brightness(80%) blur(5px);
+    filter: brightness(0.84);
+    transition: transform var(--ease), filter var(--ease);
 }
 
-
-
-/* TEXTO */
+.img-placeholder:hover img {
+    transform: scale(1.04);
+    filter: brightness(0.95);
+}
 
 .sobre-texto {
-
-    color: #d4a75c;
-    font-size: 24px;
-
+    color: var(--text-soft);
+    font-size: 20px;
 }
 
-
-
-.sobre-texto h2 {
-
-    font-size: 40px;
-    margin-bottom: 20px;
-
+.sobre-texto h2,
+.servicos h2,
+.precos h2,
+.equipe h2,
+.localizacao h2,
+.avaliacoes h2 {
+    color: var(--gold-strong);
+    margin-bottom: 18px;
+    font-size: clamp(30px, 4vw, 42px);
 }
 
-
-
-.sobre-texto p {
-
-    margin-bottom: 15px;
-
-    line-height: 1.5;
-
-
-
+.sobre-texto p,
+.localizacao-texto p {
+    margin-bottom: 14px;
+    line-height: 1.6;
 }
 
-
-
-/* SERVIÇOS */
-
+/* SERVICOS */
 .servicos {
-
-    background: #111;
-
-    padding: 60px 40px;
-
     text-align: center;
-
 }
-
-
 
 .servicos h2 {
-
-    color: #d4a75c;
-
-    margin-bottom: 40px;
-
+    margin-bottom: 36px;
 }
 
-
-
-/* GRID SYSTEM: Cria linhas/colunas auto-gerenciadas. (auto-fit) preenche a largura flexível e tomba blocos caso a tela esprema! */
 .servicos-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 40px;
+    gap: 28px;
     max-width: 1200px;
     margin: 0 auto;
 }
 
 .coluna {
-    background: #1c1c1c;
-    padding: 30px 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: var(--bg-card);
+    border: 1px solid rgba(212, 167, 92, 0.2);
+    padding: 28px 20px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    transition: transform var(--ease), box-shadow var(--ease), border-color var(--ease);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
 }
 
-/* EFEITOS VISUAIS: No momento em que o Mouse pairar (:hover), a ficha/card levanta na tela 10 pixels imitando Pulo (TranslateY) */
 .coluna:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 10px 20px rgba(212, 167, 92, 0.2);
+    transform: translateY(-6px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
+    border-color: rgba(212, 167, 92, 0.55);
 }
 
 .coluna h3 {
-    color: #d4a75c;
-    margin-bottom: 20px;
-    font-size: 24px;
-    border-bottom: 2px solid #d4a75c;
+    color: var(--gold-strong);
+    margin-bottom: 16px;
+    font-size: 26px;
+    border-bottom: 2px solid rgba(212, 167, 92, 0.8);
     padding-bottom: 10px;
-    display: inline-block;
-    text-align: center;
 }
 
 .coluna ul {
     list-style: none;
-    margin-top: 10px;
+    margin-top: 6px;
     width: 100%;
-    text-align: center;
 }
 
 .coluna li {
     margin-bottom: 12px;
-    color: #eee;
-    font-size: 20px;
+    color: var(--text);
+    font-size: 19px;
     padding-bottom: 8px;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+/* PRECOS */
+.precos {
+    background: linear-gradient(165deg, rgba(10, 9, 8, 0.98), rgba(14, 12, 9, 0.9));
+    overflow: hidden;
+}
 
+.precos::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url('img/ferramentas-barbeiro.jpg') center/cover no-repeat;
+    opacity: 0.1;
+    pointer-events: none;
+}
 
-.equipe {
+.precos-wrapper {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+}
 
-    background: #2b1a0f;
-
-    padding: 60px 40px;
-
+.precos h2 {
     text-align: center;
-
+    margin-bottom: 12px;
 }
 
-
-
-/* TOPO DA SEÇÃO */
-
-.equipe-topo h2 {
-
-    color: #d4a75c;
-
-    font-size: 30px;
-
+.precos-descricao {
+    text-align: center;
+    color: #d3d0ca;
+    margin-bottom: 26px;
+    font-size: clamp(16px, 2vw, 22px);
 }
 
+.precos-lista {
+    display: grid;
+    gap: 18px;
+}
 
+.preco-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(10, 10, 10, 0.75);
+    border: 1px solid rgba(212, 167, 92, 0.25);
+    border-radius: 12px;
+    padding: 20px 26px;
+    min-height: 92px;
+    transition: transform var(--ease), border-color var(--ease), background-color var(--ease), box-shadow var(--ease);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.38);
+}
+
+.preco-item:hover {
+    transform: translateY(-3px);
+    border-color: rgba(212, 167, 92, 0.62);
+    background: rgba(12, 12, 12, 0.9);
+}
+
+.preco-item.destaque {
+    border-color: rgba(212, 167, 92, 0.88);
+    box-shadow: 0 10px 22px rgba(212, 167, 92, 0.2);
+}
+
+.preco-badge {
+    position: absolute;
+    top: -11px;
+    right: 18px;
+    background: var(--gold);
+    color: #1a150d;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    font-size: 12px;
+    padding: 7px 14px;
+    border-radius: 7px;
+    text-transform: uppercase;
+}
+
+.preco-nome {
+    color: #f4f4f4;
+    font-size: clamp(22px, 2.8vw, 36px);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+}
+
+.preco-linha {
+    flex: 1;
+    border-bottom: 1px dashed rgba(212, 167, 92, 0.38);
+}
+
+.preco-valor {
+    color: #ffdf72;
+    font-size: clamp(34px, 4vw, 50px);
+    line-height: 1;
+    text-shadow: 0 0 14px rgba(255, 223, 114, 0.62);
+    font-family: 'Playfair Display', serif;
+}
+
+/* EQUIPE */
+.equipe {
+    text-align: center;
+}
 
 .equipe-topo .linha {
-
-    margin: 15px auto 40px;
-
+    margin: 15px auto 34px;
 }
 
-
-
-/* CARDS */
-
 .equipe-container {
-
     display: flex;
-
     justify-content: center;
-
-    gap: 40px;
-
+    gap: 28px;
     flex-wrap: wrap;
-
 }
 
 .membro {
-    background: #1c1c1c;
-    padding: 40px 20px;
-    border-radius: 10px;
+    background: var(--bg-card);
+    border: 1px solid rgba(212, 167, 92, 0.24);
+    padding: 32px 20px;
+    border-radius: var(--radius);
     width: 280px;
     text-align: center;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--shadow);
+    transition: transform var(--ease), border-color var(--ease);
+}
+
+.membro:hover {
+    transform: translateY(-4px);
+    border-color: rgba(212, 167, 92, 0.56);
 }
 
 .membro h3 {
-    color: #d4a75c;
+    color: var(--gold-strong);
     margin-bottom: 15px;
-    font-size: 30px;
+    font-size: 34px;
 }
 
 .membro p {
-    color: #fff;
+    color: var(--text);
     font-size: 20px;
 }
 
@@ -494,11 +557,11 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    transition: color 0.3s ease;
+    transition: color var(--ease);
 }
 
 .wpp-contato:hover {
-    color: #25D366;
+    color: #25d366;
 }
 
 .wpp-icon {
@@ -507,126 +570,105 @@ body {
     object-fit: contain;
 }
 
-
-
-/* LOCALIZAÇÃO */
-.localizacao {
-    background: #1a1a1a;
-    padding: 60px 40px;
-}
-
-.localizacao-container {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 40px;
-    max-width: 1000px;
-    margin: auto;
-}
-
+/* LOCALIZACAO */
 .localizacao-texto {
-    flex: 1 1 400px;
-    color: #d4a75c;
+    color: var(--text-soft);
 }
 
+.localizacao-texto strong,
 .localizacao-texto h2 {
-    font-size: 40px;
-    margin-bottom: 20px;
-}
-
-.localizacao-texto p {
-    color: #fff;
-    margin-bottom: 15px;
-    font-size: 18px;
-    line-height: 1.5;
+    color: var(--gold-strong);
 }
 
 .localizacao-mapa {
-    flex: 1 1 400px;
     width: 100%;
 }
 
+/* AVALIACOES */
 .avaliacoes {
-
-    background: #111;
-
-    padding: 60px 40px;
-
     text-align: center;
-
 }
-
-
 
 .avaliacoes h2 {
-
-    color: #d4a75c;
-
-    margin-bottom: 40px;
-
+    margin-bottom: 30px;
 }
 
-
-
-/* CARROSSEL TIPO FILME INFINITO */
 .film-carousel {
     overflow: hidden;
-    /* Impede a barra de rolagem horizontal nativa do monitor, transformando o bloco numa "Janela" pro trilho */
-    padding: 20px 0;
+    padding: 12px 0;
     position: relative;
     width: 100%;
 }
 
-.film-track {
-    display: flex;
-    gap: 30px;
-    width: max-content;
-    /* Permite o trilho crescer infinitamente para a direita absorvendo os clones html */
-    /* Animação CSS contínua e linear (sem aceleração de borda) */
-    animation: scroll-film 15s linear infinite;
+.film-carousel::before,
+.film-carousel::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 90px;
+    z-index: 1;
+    pointer-events: none;
 }
 
-/* Quando passa o mouse em cima da "Fita", o rolo para de rodar pro usuário conseguir ler sossegado (Acessibilidade)! */
+.film-carousel::before {
+    left: 0;
+    background: linear-gradient(90deg, rgba(17, 17, 17, 1), rgba(17, 17, 17, 0));
+}
+
+.film-carousel::after {
+    right: 0;
+    background: linear-gradient(270deg, rgba(17, 17, 17, 1), rgba(17, 17, 17, 0));
+}
+
+.film-track {
+    display: flex;
+    gap: 22px;
+    width: max-content;
+    animation: scroll-film 28s linear infinite;
+}
+
 .film-track:hover {
     animation-play-state: paused;
 }
 
-/* Empurra do Ponto Zero absoluto (0%) ate o fim nativo do html original (-50%).
-   Como a outra exata metade são os "Cartões Clones", quando bater em 50% reseta pra 0 invisívelmente */
 @keyframes scroll-film {
     0% {
         transform: translateX(0);
     }
 
     100% {
-        transform: translateX(calc(-50% - 15px));
+        transform: translateX(calc(-50% - 11px));
     }
-
-    /* Compensa a quebra de gap/2 */
 }
 
 .avaliacao {
-    background: #1c1c1c;
-    padding: 30px 20px;
-    border-radius: 10px;
+    background: var(--bg-card-strong);
+    border: 1px solid rgba(212, 167, 92, 0.22);
+    padding: 24px 20px;
+    border-radius: var(--radius);
     width: 90%;
     max-width: 320px;
     margin: 0 auto;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    box-shadow: var(--shadow);
+    transition: transform var(--ease), border-color var(--ease);
+}
+
+.avaliacao:hover {
+    transform: translateY(-4px);
+    border-color: rgba(212, 167, 92, 0.55);
 }
 
 .estrelas {
-    color: #d4a75c;
+    color: var(--gold-strong);
     font-size: 20px;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
     letter-spacing: 2px;
-    font-family: system-ui, Arial, sans-serif;
 }
 
 .avaliacao blockquote {
-    color: #fff;
-    margin: 0 0 20px 0;
+    color: var(--text);
+    margin: 0 0 18px 0;
     font-style: italic;
     font-size: 16px;
     line-height: 1.5;
@@ -639,90 +681,95 @@ body {
     gap: 10px;
 }
 
-.cliente-info span {
-    color: #d4a75c;
-    font-size: 16px;
-    font-weight: bold;
+.cliente-foto {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(212, 167, 92, 0.72);
 }
 
-/* ===============================
-   RODAPÉ FINAL DA PÁGINA
-   =============================== */
+/* Garante miniatura pequena mesmo se alguma classe for perdida no HTML */
+.avaliacao img {
+    width: 48px;
+    height: 48px;
+    max-width: 48px;
+    max-height: 48px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.cliente-info span {
+    color: var(--gold-strong);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* RODAPE */
 .rodape {
-    background: #000;
-    padding: 60px 40px 20px;
-    color: #fff;
+    background: rgba(2, 2, 2, 0.96);
+    color: var(--text);
+    padding-bottom: 24px;
 }
 
 .rodape-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 40px;
+    gap: 30px;
     max-width: 1200px;
     margin: 0 auto;
-    border-bottom: 1px solid #333;
-    padding-bottom: 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    padding-bottom: 34px;
 }
 
 .rodape-coluna {
-    flex: 1 1 200px;
-    /* Caixas crescem ou tombam para o formato vertical nos celulares */
+    flex: 1 1 220px;
 }
 
-/* Identidade Visual do Rodapé */
 .rodape-logo {
-    color: #d4a75c;
-    font-family: 'Playfair Display', serif;
-    font-size: 28px;
-    margin-bottom: 20px;
+    color: var(--gold-strong);
+    font-size: 30px;
+    margin-bottom: 16px;
 }
 
 .rodape-coluna h3 {
     color: #fff;
     font-size: 20px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     position: relative;
     padding-bottom: 10px;
 }
 
-/* Tracinho Dourado Decorativo debaixo do Título */
 .rodape-coluna h3::after {
     content: '';
     position: absolute;
     left: 0;
     bottom: 0;
-    width: 40px;
+    width: 42px;
     height: 2px;
-    background: #d4a75c;
+    background: var(--gold);
 }
 
 .rodape-coluna p {
-    color: #cecece;
+    color: #c7c7c7;
     margin-bottom: 12px;
     font-size: 15px;
     line-height: 1.6;
 }
 
-/* Botão minimalista no contato */
-.btn-rodape {
-    display: inline-block;
-    background: transparent;
-    color: #d4a75c;
-    border: 1px solid #d4a75c;
-    padding: 8px 20px;
+.admin-link {
+    color: var(--gold-strong);
     text-decoration: none;
-    border-radius: 5px;
-    margin-top: 10px;
-    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(212, 167, 92, 0.45);
+    transition: opacity var(--ease), border-color var(--ease);
 }
 
-.btn-rodape:hover {
-    background: #d4a75c;
-    color: #000;
+.admin-link:hover {
+    opacity: 0.86;
+    border-color: rgba(212, 167, 92, 0.8);
 }
 
-/* Faixa de Direitos Autorais lá embaixo da tela */
 .rodape-bottom {
     text-align: center;
     padding-top: 20px;
@@ -733,16 +780,36 @@ body {
     font-size: 14px;
 }
 
-/* ==================================
-   RESPONSIVIDADE E DISPOSITIVOS MÓVEIS
-   ================================== */
-/* ==================================
-   PONTO DE QUEBRA RESPONSIVO (MOBILE MEDIA QUERIES)
-   Todas as regras após a linha abaixo SÓ afetarão as telas de Tablets ou Celulares (Menores que 768px)!
-   ================================== */
+/* RESPONSIVO */
+@media (max-width: 920px) {
+    .banner {
+        min-height: 80vh;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        gap: 26px;
+    }
+
+    .banner-left {
+        margin-left: 0;
+    }
+
+    .banner-center {
+        margin-right: 0;
+    }
+
+    .linha {
+        margin: 15px auto;
+    }
+}
+
 @media (max-width: 768px) {
     .topo {
-        padding: 15px 25px;
+        padding: 14px 20px;
+    }
+
+    .logo {
+        font-size: 22px;
     }
 
     #btnMobile {
@@ -759,19 +826,17 @@ body {
         align-items: center;
         justify-content: center;
         position: absolute;
-        top: 60px;
+        top: 64px;
         left: 0;
         width: 100%;
-        background: rgba(52, 29, 8, 0.95);
-        backdrop-filter: blur(15px);
+        background: rgba(13, 11, 9, 0.95);
+        backdrop-filter: blur(12px);
         padding: 20px 0;
-        border-radius: 0 0 20px 20px;
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-
+        border-bottom: 1px solid var(--line);
         opacity: 0;
         visibility: hidden;
-        transform: translateY(-20px);
-        transition: all 0.3s ease-in-out;
+        transform: translateY(-10px);
+        transition: all var(--ease);
         z-index: 999;
     }
 
@@ -782,33 +847,77 @@ body {
     }
 
     .menu a {
-        margin: 15px 0;
-        font-size: 18px;
+        margin: 12px 0;
         width: 100%;
         text-align: center;
     }
 
-    .banner {
-        flex-direction: column;
-        justify-content: center;
+    .sobre,
+    .servicos,
+    .precos,
+    .equipe,
+    .localizacao,
+    .avaliacoes,
+    .rodape {
+        padding: 56px 20px;
+    }
+
+    .sobre-container,
+    .localizacao-container {
         text-align: center;
-        gap: 30px;
     }
 
-    .banner-left {
-        margin-left: 0;
+    .preco-item {
+        padding: 18px 14px;
     }
 
-    .banner-center {
-        margin-right: 0;
+    .preco-nome {
+        font-size: 19px;
+        text-align: left;
     }
 
+    .preco-valor {
+        font-size: 30px;
+    }
+
+    .preco-badge {
+        right: 10px;
+    }
+
+    .film-carousel::before,
+    .film-carousel::after {
+        width: 42px;
+    }
+}
+
+@media (max-width: 520px) {
     .banner-left h1,
     .banner-left h2 {
-        font-size: 40px;
+        font-size: 42px;
     }
 
-    .linha {
-        margin: 15px auto;
+    .preco-item {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px 14px;
+        align-items: center;
+    }
+
+    .preco-linha {
+        grid-column: 1 / -1;
+    }
+
+    .preco-valor {
+        justify-self: end;
+        font-size: 34px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }
