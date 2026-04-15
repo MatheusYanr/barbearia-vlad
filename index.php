@@ -156,7 +156,6 @@ $whatsapp2 = whatsappLink($phone2);
         <section id="precos" class="precos" aria-labelledby="precos-titulo">
             <div class="precos-wrapper" data-aos="fade-up">
                 <h2 id="precos-titulo">Serviços e Preços</h2>
-                <p class="precos-descricao">Valores atualizados direto pelo painel administrativo.</p>
 
                 <div class="precos-lista">
                     <?php foreach ($services as $service): ?>
@@ -209,7 +208,7 @@ $whatsapp2 = whatsappLink($phone2);
             <div class="localizacao-container">
                 <div class="localizacao-texto" data-aos="fade-right">
                     <h2 id="localizacao-titulo">Onde Atendemos</h2>
-                    <p>Venha nos visitar! Estamos localizados num ponto estratégico e de fácil acesso para melhor lhe
+                    <p>Venha nos visitar! Estamos localizados em um ponto estratégico e de fácil acesso para melhor lhe
                         atender.</p>
                     <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
