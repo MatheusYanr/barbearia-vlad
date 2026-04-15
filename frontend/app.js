@@ -202,22 +202,13 @@ async function loadSite() {
         return;
     }
 
-    var path = API_BASE.replace(/\/$/, '') + '/site.php';
-    var url = path;
-    if (path.indexOf('http') !== 0 && typeof window !== 'undefined' && window.location && window.location.origin) {
-        url = window.location.origin + (path.indexOf('/') === 0 ? '' : '/') + path;
-    }
+    var url = API_BASE.replace(/\/$/, '') + '/site.php';
     var res;
     try {
-        res = await fetch(path, { credentials: 'omit', cache: 'no-store' });
+        res = await fetch(url);
     } catch (e) {
         errEl.hidden = false;
-        var det = (e && e.message) ? e.message : String(e);
-        errEl.innerHTML = 'Não foi possível carregar a API. URL tentada: <code>' + escapeHtml(url) + '</code>. ' +
-            'Abra essa URL em uma aba: se não aparecer JSON, o PHP ou o banco falhou. ' +
-            'Se o site e a API forem domínios diferentes, em <code>backend/config.php</code> use ' +
-            '<code>CORS_ALLOWED_ORIGIN</code> com <code>*</code> (só para teste) ou a URL exata do site. ' +
-            '<small>(' + escapeHtml(det) + ')</small>';
+        errEl.textContent = 'Erro de rede ao buscar a API. Verifique a URL e o CORS no servidor PHP.';
         return;
     }
     if (!res.ok) {

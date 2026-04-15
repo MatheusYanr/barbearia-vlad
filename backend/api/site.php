@@ -9,24 +9,8 @@ header('Content-Type: application/json; charset=utf-8');
 require_once dirname(__DIR__) . '/config.php';
 require_once dirname(__DIR__) . '/includes/functions.php';
 
-/*
- * CORS: defina CORS_ALLOWED_ORIGIN no config.php. Se não existir, usa * (evita fatal e tela vazia).
- */
-$configured = defined('CORS_ALLOWED_ORIGIN') ? CORS_ALLOWED_ORIGIN : '*';
-$reqOrigin = isset($_SERVER['HTTP_ORIGIN']) ? trim((string) $_SERVER['HTTP_ORIGIN']) : '';
-if ($configured === '*' || $configured === '') {
-    header('Access-Control-Allow-Origin: *');
-} elseif ($reqOrigin !== '') {
-    $site = rtrim(SITE_PUBLIC_URL, '/');
-    $cfg = rtrim((string) $configured, '/');
-    if (strcasecmp($reqOrigin, $site) === 0 || strcasecmp($reqOrigin, $cfg) === 0) {
-        header('Access-Control-Allow-Origin: ' . $reqOrigin);
-    } else {
-        header('Access-Control-Allow-Origin: ' . $configured);
-    }
-} else {
-    header('Access-Control-Allow-Origin: ' . $configured);
-}
+$origin = CORS_ALLOWED_ORIGIN;
+header('Access-Control-Allow-Origin: ' . $origin);
 header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Access-Control-Max-Age: 86400');
@@ -79,13 +63,11 @@ if ($catRes) {
     while ($cat = $catRes->fetch_assoc()) {
         $cid = (int) $cat['id'];
         $items = [];
-        /* Sem mysqlnd, get_result() não existe — usar id inteiro na query é seguro aqui */
-        $cid_safe = (int) $cid;
-        $ir = $mysqli->query(
-            'SELECT id, name, price_display, sort_order FROM service_items WHERE category_id = ' . $cid_safe .
-            ' ORDER BY sort_order ASC, id ASC'
-        );
-        if ($ir) {
+        $stmt = $mysqli->prepare('SELECT id, name, price_display, sort_order FROM service_items WHERE category_id = ? ORDER BY sort_order ASC, id ASC');
+        if ($stmt) {
+            $stmt->bind_param('i', $cid);
+            $stmt->execute();
+            $ir = $stmt->get_result();
             while ($row = $ir->fetch_assoc()) {
                 $items[] = [
                     'id' => (int) $row['id'],
@@ -93,6 +75,7 @@ if ($catRes) {
                     'price_display' => $row['price_display'],
                 ];
             }
+            $stmt->close();
         }
         $categories[] = [
             'id' => $cid,

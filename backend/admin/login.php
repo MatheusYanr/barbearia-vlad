@@ -20,18 +20,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt) {
             $stmt->bind_param('s', $user);
             $stmt->execute();
-            $stmt->store_result();
-            $uid = 0;
-            $hash = '';
-            if ($stmt->num_rows === 1) {
-                $stmt->bind_result($uid, $hash);
-                $stmt->fetch();
-            }
+            $res = $stmt->get_result();
+            $row = $res->fetch_assoc();
             $stmt->close();
-            if ($uid && password_verify($pass, $hash)) {
+            if ($row && password_verify($pass, $row['password_hash'])) {
                 $_SESSION['admin_logged'] = true;
                 $_SESSION['admin_user'] = $user;
-                $_SESSION['admin_id'] = (int) $uid;
+                $_SESSION['admin_id'] = (int) $row['id'];
                 header('Location: dashboard.php');
                 exit;
             }
