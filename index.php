@@ -282,6 +282,17 @@ $whatsapp2 = whatsappLink($phone2);
                     <?php endforeach; ?>
                 </div>
             </div>
+
+            <div class="google-review-actions" style="display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; flex-wrap: wrap;">
+                <a href="#" target="_blank" rel="noopener noreferrer" style="background-color: #f2a900; color: #1a1a1a; padding: 0.8rem 1.5rem; text-decoration: none; border-radius: 5px; font-weight: bold; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.3);" onmouseover="this.style.backgroundColor='#d19200'" onmouseout="this.style.backgroundColor='#f2a900'">
+                    <!-- INSERIR LINK DO GOOGLE AQUI -->
+                    Adicionar avaliação
+                </a>
+                <a href="#" target="_blank" rel="noopener noreferrer" style="background-color: transparent; color: #f2a900; border: 2px solid #f2a900; padding: 0.8rem 1.5rem; text-decoration: none; border-radius: 5px; font-weight: bold; transition: all 0.3s ease;" onmouseover="this.style.backgroundColor='rgba(242, 169, 0, 0.1)'" onmouseout="this.style.backgroundColor='transparent'">
+                    <!-- INSERIR LINK DO GOOGLE AQUI -->
+                    Visualizar mais avaliações
+                </a>
+            </div>
         </section>
 
     </main>

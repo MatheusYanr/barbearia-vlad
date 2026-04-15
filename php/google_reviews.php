@@ -168,8 +168,7 @@ function saveGoogleReviews(mysqli $conn, array $reviews): int
         $order = ++$maxOrder;
         $clientName = (string) $review['client_name'];
         $quote = (string) $review['quote'];
-        $rating = (int) $review['rating'];
-        $photoPath = !empty($review['photo_url']) ? (string) $review['photo_url'] : 'img/pessoa1.jpg';
+        $photoPath = !empty($review['photo_url']) ? (string) $review['photo_url'] : '';
 
         $stmt->bind_param('issisi', $nextId, $clientName, $quote, $rating, $photoPath, $order);
 
