@@ -6,9 +6,9 @@ require_once __DIR__ . '/php/helpers.php';
 $conn = require __DIR__ . '/php/db.php';
 
 $defaultSettings = [
-    'about_text' => 'Nosso objetivo e proporcionar uma experiencia unica, combinando tecnicas tradicionais com tendencias atuais, sempre com conforto e qualidade.',
-    'weekday_hours' => 'Segunda a Sexta - 9h as 12h e das 13h30 as 19h30',
-    'saturday_hours' => 'Sabados - 9h as 12h e das 13h30 as 17h',
+    'about_text' => 'Nosso objetivo é proporcionar uma experiência única, combinando técnicas tradicionais com tendências atuais, sempre com conforto e qualidade.',
+    'weekday_hours' => 'Segunda a Sexta - 9h às 12h e das 13h30 às 19h30',
+    'saturday_hours' => 'Sábados - 9h às 12h e das 13h30 às 17h',
     'special_hours' => 'Feriados e dias especiais: consulte no WhatsApp.',
     'phone_1' => '(48) 98494-0065',
     'phone_2' => '(48) 93380-2543',
@@ -25,21 +25,21 @@ $reviews = [
     [
         'id' => 1,
         'client_name' => 'Cliente',
-        'quote' => 'Otimo atendimento e servico de qualidade!',
+        'quote' => 'Ótimo atendimento e serviço de qualidade!',
         'rating' => 5,
         'photo_path' => 'img/pessoa1.jpg',
     ],
     [
         'id' => 2,
         'client_name' => 'Cliente',
-        'quote' => 'Ambiente confortavel e profissionais excelentes.',
+        'quote' => 'Ambiente confortável e profissionais excelentes.',
         'rating' => 5,
         'photo_path' => 'img/pessoa2.jpg',
     ],
     [
         'id' => 3,
         'client_name' => 'Cliente',
-        'quote' => 'Melhor barbearia da regiao, recomendo!',
+        'quote' => 'Melhor barbearia da região, recomendo!',
         'rating' => 5,
         'photo_path' => 'img/pessoa2.jpg',
     ],
@@ -81,8 +81,8 @@ $whatsapp2 = whatsappLink($phone2);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="Barbearia Vlad - Cortes sociais, degradês, barba e estetica masculina. Proporcionamos uma experiencia unica com conforto e excelencia.">
-    <meta name="keywords" content="barbearia, corte de cabelo, barba, Vlad, salao masculino">
+        content="Barbearia Vlad - Cortes sociais, degradês, barba e estética masculina. Proporcionamos uma experiência única com conforto e excelência.">
+    <meta name="keywords" content="barbearia, corte de cabelo, barba, Vlad, salão masculino">
     <title>Barbearia Vlad - Cortes, Barba e Estilo</title>
 
     <link rel="icon" type="image/svg+xml" href="img/favicon.svg">
@@ -101,19 +101,19 @@ $whatsapp2 = whatsappLink($phone2);
 <body>
 
     <header class="topo" role="banner">
-        <a href="#call-to-action" id="logo" class="logo" aria-label="Ir para o inicio da pagina">BARBEARIA VLAD</a>
+        <a href="#call-to-action" id="logo" class="logo" aria-label="Ir para o início da página">BARBEARIA VLAD</a>
 
         <button id="btnMobile" aria-label="Abrir menu" aria-haspopup="true" aria-controls="menu" aria-expanded="false">
             <span class="hamburger"></span>
         </button>
 
-        <nav id="menu" class="menu" aria-label="Navegacao Principal">
-            <a href="#call-to-action" class="menu-link">Inicio</a>
+        <nav id="menu" class="menu" aria-label="Navegação Principal">
+            <a href="#call-to-action" class="menu-link">Início</a>
             <a href="#sobre" class="menu-link">Sobre</a>
-            <a href="#precos" class="menu-link">Precos</a>
+            <a href="#precos" class="menu-link">Preços</a>
             <a href="#equipe" class="menu-link">Equipe</a>
-            <a href="#localizacao" class="menu-link">Localizacao</a>
-            <a href="#avaliacoes" class="menu-link">Avaliacoes</a>
+            <a href="#localizacao" class="menu-link">Localização</a>
+            <a href="#avaliacoes" class="menu-link">Avaliações</a>
         </nav>
     </header>
 
@@ -121,7 +121,7 @@ $whatsapp2 = whatsappLink($phone2);
 
         <section id="call-to-action" class="banner" aria-labelledby="banner-titulo">
             <img id="cta-img" src="img/bastao-barbearia.jpg"
-                alt="Interior escuro focado no classico de uma Barbearia moderna" loading="lazy">
+                alt="Interior escuro focado no clássico de uma barbearia moderna" loading="lazy">
 
             <div class="banner-left" data-aos="fade-right">
                 <h1 id="banner-titulo">BARBEARIA</h1>
@@ -131,7 +131,7 @@ $whatsapp2 = whatsappLink($phone2);
             </div>
 
             <div class="banner-center" data-aos="fade-left">
-                <h3>Horarios</h3>
+                <h3>Horários</h3>
                 <p><?= h($weekdayHours) ?></p>
                 <p><?= h($saturdayHours) ?></p>
                 <p class="horario-especial"><?= h($specialHours) ?></p>
@@ -147,7 +147,7 @@ $whatsapp2 = whatsappLink($phone2);
                     </div>
                 </figure>
                 <div class="sobre-texto">
-                    <h2 id="sobre-titulo">Sobre Nos</h2>
+                    <h2 id="sobre-titulo">Sobre Nós</h2>
                     <p><?= nl2br(h($aboutText)) ?></p>
                 </div>
             </article>
@@ -155,7 +155,7 @@ $whatsapp2 = whatsappLink($phone2);
 
         <section id="precos" class="precos" aria-labelledby="precos-titulo">
             <div class="precos-wrapper" data-aos="fade-up">
-                <h2 id="precos-titulo">Servicos e Precos</h2>
+                <h2 id="precos-titulo">Serviços e Preços</h2>
                 <p class="precos-descricao">Valores atualizados direto pelo painel administrativo.</p>
 
                 <div class="precos-lista">
@@ -186,18 +186,18 @@ $whatsapp2 = whatsappLink($phone2);
                         <a href="<?= h($whatsapp1) ?>" target="_blank" class="wpp-contato"
                             aria-label="Enviar mensagem para o Barbeiro Vladimir no WhatsApp">
                             <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-                                alt="Icone Oficial do WhatsApp" class="wpp-icon" loading="lazy">
+                                alt="Ícone oficial do WhatsApp" class="wpp-icon" loading="lazy">
                             <?= h($phone1) ?>
                         </a>
                     </p>
                 </article>
                 <article class="membro" data-aos="flip-right" data-aos-delay="200">
-                    <h3>Junior</h3>
+                    <h3>Júnior</h3>
                     <p>
                         <a href="<?= h($whatsapp2) ?>" target="_blank" class="wpp-contato"
-                            aria-label="Enviar mensagem para o Barbeiro Junior no WhatsApp">
+                            aria-label="Enviar mensagem para o Barbeiro Júnior no WhatsApp">
                             <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-                                alt="Icone Oficial do WhatsApp" class="wpp-icon" loading="lazy">
+                                alt="Ícone oficial do WhatsApp" class="wpp-icon" loading="lazy">
                             <?= h($phone2) ?>
                         </a>
                     </p>
@@ -209,18 +209,18 @@ $whatsapp2 = whatsappLink($phone2);
             <div class="localizacao-container">
                 <div class="localizacao-texto" data-aos="fade-right">
                     <h2 id="localizacao-titulo">Onde Atendemos</h2>
-                    <p>Venha nos visitar! Estamos localizados num ponto estrategico e de facil acesso para melhor lhe
+                    <p>Venha nos visitar! Estamos localizados num ponto estratégico e de fácil acesso para melhor lhe
                         atender.</p>
                     <p><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                             class="svg-icon-inline" aria-hidden="true">
                             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                             <circle cx="12" cy="10" r="3"></circle>
-                        </svg> <strong>Endereco:</strong> Rua Otto Julio Malina, 767 - Bairro Ipiranga<br>Sao Jose / SC
+                        </svg> <strong>Endereço:</strong> Rua Otto Júlio Malina, 767 - Bairro Ipiranga<br>São José / SC
                     </p>
                 </div>
                 <div class="localizacao-mapa" data-aos="fade-left">
-                    <iframe title="Mapa de localizacao interativo da barbearia pelo Google Maps"
+                    <iframe title="Mapa de localização interativo da barbearia pelo Google Maps"
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3536.967103636885!2d-48.62273730000001!3d-27.5635314!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x952749ab569c7c5f%3A0x2caa2da2126fadde!2sBarbearia%20Vlad!5e0!3m2!1spt-BR!2sbr!4v1776116414677!5m2!1spt-BR!2sbr"
                         width="100%" height="300"
                         style="border:0; border-radius:15px; box-shadow: 0 6px 18px rgba(0,0,0,0.45);"
@@ -230,13 +230,13 @@ $whatsapp2 = whatsappLink($phone2);
         </section>
 
         <section id="avaliacoes" class="avaliacoes" aria-labelledby="avaliacoes-titulo" data-aos="fade-up">
-            <h2 id="avaliacoes-titulo">Avaliacoes</h2>
+            <h2 id="avaliacoes-titulo">Avaliações</h2>
 
             <div class="film-carousel">
                 <div class="film-track" id="filmTrack">
                     <?php foreach ($reviews as $review): ?>
                         <?php
-                        $reviewRating = (int)($review['rating'] ?? 5);
+                        $reviewRating = (int) ($review['rating'] ?? 5);
                         if ($reviewRating < 1) {
                             $reviewRating = 1;
                         }
@@ -244,26 +244,26 @@ $whatsapp2 = whatsappLink($phone2);
                             $reviewRating = 5;
                         }
 
-                        $reviewClientName = trim((string)($review['client_name'] ?? 'Cliente'));
+                        $reviewClientName = trim((string) ($review['client_name'] ?? 'Cliente'));
                         if ($reviewClientName === '') {
                             $reviewClientName = 'Cliente';
                         }
 
-                        $reviewQuote = trim((string)($review['quote'] ?? ''));
+                        $reviewQuote = trim((string) ($review['quote'] ?? ''));
                         if ($reviewQuote === '') {
                             $reviewQuote = 'Excelente atendimento!';
                         }
 
-                        $reviewPhoto = normalizeReviewPhotoPath((string)($review['photo_path'] ?? ''));
+                        $reviewPhoto = normalizeReviewPhotoPath((string) ($review['photo_path'] ?? ''));
                         ?>
                         <figure class="avaliacao">
-                            <div class="estrelas" aria-label="Avaliacao de <?= $reviewRating ?> estrelas">
+                            <div class="estrelas" aria-label="Avaliação de <?= $reviewRating ?> estrelas">
                                 <?= str_repeat('&#9733;', $reviewRating) ?>
                             </div>
                             <blockquote>"<?= h($reviewQuote) ?>"</blockquote>
                             <figcaption class="cliente-info">
-                                <img src="<?= h($reviewPhoto) ?>" alt="Foto de <?= h($reviewClientName) ?>" class="cliente-foto"
-                                    loading="lazy">
+                                <img src="<?= h($reviewPhoto) ?>" alt="Foto de <?= h($reviewClientName) ?>"
+                                    class="cliente-foto" loading="lazy">
                                 <span>- <?= h($reviewClientName) ?></span>
                             </figcaption>
                         </figure>
@@ -278,15 +278,15 @@ $whatsapp2 = whatsappLink($phone2);
         <div class="rodape-container">
             <div class="rodape-coluna logo-coluna">
                 <h2 class="rodape-logo">BARBEARIA VLAD</h2>
-                <p>A experiencia de barbearia mais tradicional da sua regiao. Cortes modernos e um ambiente pensado para
+                <p>A experiência de barbearia mais tradicional da sua região. Cortes modernos e um ambiente pensado para
                     o
-                    homem contemporaneo.</p>
+                    homem contemporâneo.</p>
             </div>
             <div class="rodape-coluna">
                 <h3>Visite-nos</h3>
-                <p>Rua Otto Julio Malina, 767</p>
+                <p>Rua Otto Júlio Malina, 767</p>
                 <p>Bairro Ipiranga</p>
-                <p>Sao Jose / SC</p>
+                <p>São José / SC</p>
             </div>
             <div class="rodape-coluna">
                 <h3>Contato</h3>
@@ -295,7 +295,7 @@ $whatsapp2 = whatsappLink($phone2);
                 <p><a class="admin-link" href="admin/login.php">Painel administrativo</a></p>
             </div>
             <div class="rodape-coluna">
-                <h3>Horarios</h3>
+                <h3>Horários</h3>
                 <p><?= h($weekdayHours) ?></p>
                 <p><?= h($saturdayHours) ?></p>
                 <p><?= h($specialHours) ?></p>
