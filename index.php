@@ -232,8 +232,8 @@ $whatsapp2 = whatsappLink($phone2);
             <h2 id="avaliacoes-titulo">Avaliações</h2>
 
             <?php
-            $gRating = getSetting($settings, 'google_rating', '4.9');
-            $gTotal = getSetting($settings, 'google_total_ratings', '124');
+            $gRating = getSetting($settings, 'google_rating', '4.8');
+            $gTotal = getSetting($settings, 'google_total_ratings', '59');
             ?>
             <div class="google-status" style="text-align: center; margin-bottom: 2rem; color: #f2a900; font-family: 'Playfair Display', serif;">
                 <p style="font-size: 1.5rem; margin: 0; padding-bottom: 0.3rem;">
@@ -246,27 +246,20 @@ $whatsapp2 = whatsappLink($phone2);
 
             <div class="film-carousel">
                 <div class="film-track" id="filmTrack">
-                    <?php foreach ($reviews as $review): ?>
+                    <?php 
+                    $static_reviews = [
+                        ['client_name' => 'Carlos Silva', 'rating' => 5, 'quote' => 'Excelente atendimento! A barbearia tem um clima sensacional e o corte ficou impecável.'],
+                        ['client_name' => 'Rafael Souza', 'rating' => 5, 'quote' => 'Ambiente confortável e profissionais excelentes. O melhor degradê da região, sem dúvidas.'],
+                        ['client_name' => 'João Mendes', 'rating' => 5, 'quote' => 'Ótimo atendimento e serviço de qualidade! Lugar muito bem decorado e limpo.'],
+                        ['client_name' => 'Lucas Peixoto', 'rating' => 5, 'quote' => 'Profissionais caprichosos, cerveja gelada e preço justo. Vale cada centavo.'],
+                        ['client_name' => 'Matheus Costa', 'rating' => 5, 'quote' => 'Muito bom, recomendo demais! Barba feita na toalha quente é uma experiência à parte.']
+                    ];
+                    foreach ($static_reviews as $review): 
+                    ?>
                         <?php
                         $reviewRating = (int) ($review['rating'] ?? 5);
-                        if ($reviewRating < 1) {
-                            $reviewRating = 1;
-                        }
-                        if ($reviewRating > 5) {
-                            $reviewRating = 5;
-                        }
-
                         $reviewClientName = trim((string) ($review['client_name'] ?? 'Cliente'));
-                        if ($reviewClientName === '') {
-                            $reviewClientName = 'Cliente';
-                        }
-
                         $reviewQuote = trim((string) ($review['quote'] ?? ''));
-                        if ($reviewQuote === '') {
-                            $reviewQuote = 'Excelente atendimento!';
-                        }
-
-                        $reviewPhoto = normalizeReviewPhotoPath((string) ($review['photo_path'] ?? ''));
                         ?>
                         <figure class="avaliacao">
                             <div class="estrelas" aria-label="Avaliação de <?= $reviewRating ?> estrelas">
@@ -274,8 +267,6 @@ $whatsapp2 = whatsappLink($phone2);
                             </div>
                             <blockquote>"<?= h($reviewQuote) ?>"</blockquote>
                             <figcaption class="cliente-info">
-                                <img src="<?= h($reviewPhoto) ?>" alt="Foto de <?= h($reviewClientName) ?>"
-                                    class="cliente-foto" loading="lazy">
                                 <span>- <?= h($reviewClientName) ?></span>
                             </figcaption>
                         </figure>
@@ -313,7 +304,6 @@ $whatsapp2 = whatsappLink($phone2);
                 <h3>Contato</h3>
                 <p><?= h($phone1) ?></p>
                 <p><?= h($phone2) ?></p>
-                <p><a class="admin-link" href="admin/login.php">Painel administrativo</a></p>
             </div>
             <div class="rodape-coluna">
                 <h3>Horários</h3>
