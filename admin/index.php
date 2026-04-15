@@ -63,6 +63,26 @@ function saveSetting(mysqli $conn, string $key, string $value): bool
     return $ok;
 }
 
+function serviceNameExists(mysqli $conn, string $name, int $ignoreId = 0): bool
+{
+    $stmt = $conn->prepare('SELECT id FROM services WHERE name = ? AND id <> ? LIMIT 1');
+    if (!$stmt) {
+        return false;
+    }
+
+    $stmt->bind_param('si', $name, $ignoreId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $exists = $result instanceof mysqli_result && $result->num_rows > 0;
+
+    if ($result instanceof mysqli_result) {
+        $result->free();
+    }
+
+    $stmt->close();
+    return $exists;
+}
+
 function parseRatingInput(mixed $value): int
 {
     $rating = (int)$value;
@@ -174,256 +194,271 @@ $reviewUploadAbsoluteDir = __DIR__ . '/../img/avaliacoes';
 $reviewUploadRelativeDir = 'img/avaliacoes';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = (string)($_POST['action'] ?? '');
+    try {
+        $action = (string)($_POST['action'] ?? '');
 
-    if ($action === 'add_service') {
-        $name = trim((string)($_POST['service_name'] ?? ''));
-        $price = parsePriceInput((string)($_POST['service_price'] ?? ''));
-        $featured = isset($_POST['service_featured']) ? 1 : 0;
+        if ($action === 'add_service') {
+            $name = trim((string)($_POST['service_name'] ?? ''));
+            $price = parsePriceInput((string)($_POST['service_price'] ?? ''));
+            $featured = isset($_POST['service_featured']) ? 1 : 0;
 
-        if ($name === '' || $price === null) {
-            redirectPanel('error', 'Informe nome e preco validos para cadastrar o servico.');
-        }
-
-        $nextOrder = 1;
-        $orderResult = $conn->query('SELECT COALESCE(MAX(sort_order), 0) + 1 AS next_order FROM services');
-        if ($orderResult instanceof mysqli_result) {
-            $nextOrder = (int)($orderResult->fetch_assoc()['next_order'] ?? 1);
-            $orderResult->free();
-        }
-
-        $nextId = 1;
-        $idResult = $conn->query('SELECT COALESCE(MAX(id), 0) + 1 AS next_id FROM services');
-        if ($idResult instanceof mysqli_result) {
-            $nextId = (int)($idResult->fetch_assoc()['next_id'] ?? 1);
-            $idResult->free();
-        }
-
-        if ($featured === 1) {
-            $conn->query('UPDATE services SET is_featured = 0');
-        }
-
-        $stmt = $conn->prepare('INSERT INTO services (id, name, price, is_featured, sort_order, is_active) VALUES (?, ?, ?, ?, ?, 1)');
-        if (!$stmt) {
-            redirectPanel('error', 'Nao foi possivel cadastrar o servico.');
-        }
-
-        $stmt->bind_param('isdii', $nextId, $name, $price, $featured, $nextOrder);
-        $ok = $stmt->execute();
-        $stmt->close();
-
-        if (!$ok) {
-            redirectPanel('error', 'Erro ao salvar servico no banco.');
-        }
-
-        redirectPanel('ok', 'Servico adicionado com sucesso.');
-    }
-
-    if ($action === 'update_service') {
-        $serviceId = (int)($_POST['service_id'] ?? 0);
-        $name = trim((string)($_POST['service_name'] ?? ''));
-        $price = parsePriceInput((string)($_POST['service_price'] ?? ''));
-        $featured = isset($_POST['service_featured']) ? 1 : 0;
-
-        if ($serviceId <= 0 || $name === '' || $price === null) {
-            redirectPanel('error', 'Preencha corretamente os dados do servico para atualizar.');
-        }
-
-        if ($featured === 1) {
-            $stmtReset = $conn->prepare('UPDATE services SET is_featured = 0 WHERE id <> ?');
-            if ($stmtReset) {
-                $stmtReset->bind_param('i', $serviceId);
-                $stmtReset->execute();
-                $stmtReset->close();
+            if ($name === '' || $price === null) {
+                redirectPanel('error', 'Informe nome e preco validos para cadastrar o servico.');
             }
-        }
 
-        $stmt = $conn->prepare('UPDATE services SET name = ?, price = ?, is_featured = ? WHERE id = ?');
-        if (!$stmt) {
-            redirectPanel('error', 'Nao foi possivel atualizar o servico.');
-        }
-
-        $stmt->bind_param('sdii', $name, $price, $featured, $serviceId);
-        $ok = $stmt->execute();
-        $stmt->close();
-
-        if (!$ok) {
-            redirectPanel('error', 'Erro ao atualizar o servico.');
-        }
-
-        redirectPanel('ok', 'Servico atualizado com sucesso.');
-    }
-
-    if ($action === 'delete_service') {
-        $serviceId = (int)($_POST['service_id'] ?? 0);
-
-        if ($serviceId <= 0) {
-            redirectPanel('error', 'Servico invalido para exclusao.');
-        }
-
-        $stmt = $conn->prepare('DELETE FROM services WHERE id = ?');
-        if (!$stmt) {
-            redirectPanel('error', 'Nao foi possivel remover o servico.');
-        }
-
-        $stmt->bind_param('i', $serviceId);
-        $ok = $stmt->execute();
-        $stmt->close();
-
-        if (!$ok) {
-            redirectPanel('error', 'Erro ao remover o servico.');
-        }
-
-        redirectPanel('ok', 'Servico removido com sucesso.');
-    }
-
-    if ($action === 'add_review') {
-        $clientName = trim((string)($_POST['review_client_name'] ?? ''));
-        $quote = trim((string)($_POST['review_quote'] ?? ''));
-        $rating = parseRatingInput($_POST['review_rating'] ?? 5);
-
-        if ($clientName === '') {
-            $clientName = 'Cliente';
-        }
-
-        if ($quote === '') {
-            redirectPanel('error', 'Informe o texto da avaliacao.');
-        }
-
-        $uploadResult = uploadReviewPhoto(
-            $_FILES['review_photo'] ?? [],
-            $reviewUploadAbsoluteDir,
-            $reviewUploadRelativeDir
-        );
-
-        if (!$uploadResult['ok']) {
-            redirectPanel('error', (string)$uploadResult['error']);
-        }
-
-        $photoPath = (string)($uploadResult['path'] ?? '');
-        if ($photoPath === '') {
-            $photoPath = 'img/pessoa1.jpg';
-        }
-
-        $nextOrder = 1;
-        $orderResult = $conn->query('SELECT COALESCE(MAX(sort_order), 0) + 1 AS next_order FROM reviews');
-        if ($orderResult instanceof mysqli_result) {
-            $nextOrder = (int)($orderResult->fetch_assoc()['next_order'] ?? 1);
-            $orderResult->free();
-        }
-
-        $nextId = 1;
-        $idResult = $conn->query('SELECT COALESCE(MAX(id), 0) + 1 AS next_id FROM reviews');
-        if ($idResult instanceof mysqli_result) {
-            $nextId = (int)($idResult->fetch_assoc()['next_id'] ?? 1);
-            $idResult->free();
-        }
-
-        $stmt = $conn->prepare(
-            'INSERT INTO reviews (id, client_name, quote, rating, photo_path, sort_order, is_active)
-             VALUES (?, ?, ?, ?, ?, ?, 1)'
-        );
-        if (!$stmt) {
-            redirectPanel('error', 'Nao foi possivel cadastrar a avaliacao.');
-        }
-
-        $stmt->bind_param('issisi', $nextId, $clientName, $quote, $rating, $photoPath, $nextOrder);
-        $ok = $stmt->execute();
-        $stmt->close();
-
-        if (!$ok) {
-            redirectPanel('error', 'Erro ao salvar avaliacao no banco.');
-        }
-
-        redirectPanel('ok', 'Avaliacao adicionada com sucesso.');
-    }
-
-    if ($action === 'update_review') {
-        $reviewId = (int)($_POST['review_id'] ?? 0);
-        $clientName = trim((string)($_POST['review_client_name'] ?? ''));
-        $quote = trim((string)($_POST['review_quote'] ?? ''));
-        $rating = parseRatingInput($_POST['review_rating'] ?? 5);
-        $currentPhotoPath = normalizeReviewPhotoPath((string)($_POST['current_photo_path'] ?? 'img/pessoa1.jpg'));
-
-        if ($reviewId <= 0 || $quote === '') {
-            redirectPanel('error', 'Preencha corretamente os dados da avaliacao para atualizar.');
-        }
-
-        if ($clientName === '') {
-            $clientName = 'Cliente';
-        }
-
-        $uploadResult = uploadReviewPhoto(
-            $_FILES['review_photo'] ?? [],
-            $reviewUploadAbsoluteDir,
-            $reviewUploadRelativeDir
-        );
-
-        if (!$uploadResult['ok']) {
-            redirectPanel('error', (string)$uploadResult['error']);
-        }
-
-        $photoPath = $currentPhotoPath;
-        if (!empty($uploadResult['path'])) {
-            $photoPath = (string)$uploadResult['path'];
-        }
-
-        $stmt = $conn->prepare('UPDATE reviews SET client_name = ?, quote = ?, rating = ?, photo_path = ? WHERE id = ?');
-        if (!$stmt) {
-            redirectPanel('error', 'Nao foi possivel atualizar a avaliacao.');
-        }
-
-        $stmt->bind_param('ssisi', $clientName, $quote, $rating, $photoPath, $reviewId);
-        $ok = $stmt->execute();
-        $stmt->close();
-
-        if (!$ok) {
-            redirectPanel('error', 'Erro ao atualizar a avaliacao.');
-        }
-
-        redirectPanel('ok', 'Avaliacao atualizada com sucesso.');
-    }
-
-    if ($action === 'delete_review') {
-        $reviewId = (int)($_POST['review_id'] ?? 0);
-
-        if ($reviewId <= 0) {
-            redirectPanel('error', 'Avaliacao invalida para exclusao.');
-        }
-
-        $stmt = $conn->prepare('DELETE FROM reviews WHERE id = ?');
-        if (!$stmt) {
-            redirectPanel('error', 'Nao foi possivel remover a avaliacao.');
-        }
-
-        $stmt->bind_param('i', $reviewId);
-        $ok = $stmt->execute();
-        $stmt->close();
-
-        if (!$ok) {
-            redirectPanel('error', 'Erro ao remover a avaliacao.');
-        }
-
-        redirectPanel('ok', 'Avaliacao removida com sucesso.');
-    }
-
-    if ($action === 'save_settings') {
-        $fields = [
-            'about_text' => (string)($_POST['about_text'] ?? ''),
-            'weekday_hours' => (string)($_POST['weekday_hours'] ?? ''),
-            'saturday_hours' => (string)($_POST['saturday_hours'] ?? ''),
-            'special_hours' => (string)($_POST['special_hours'] ?? ''),
-            'phone_1' => (string)($_POST['phone_1'] ?? ''),
-            'phone_2' => (string)($_POST['phone_2'] ?? ''),
-        ];
-
-        foreach ($fields as $key => $value) {
-            if (!saveSetting($conn, $key, trim($value))) {
-                redirectPanel('error', 'Falha ao salvar as configuracoes gerais.');
+            if (serviceNameExists($conn, $name)) {
+                redirectPanel('error', 'Ja existe um servico com esse nome.');
             }
+
+            $nextOrder = 1;
+            $orderResult = $conn->query('SELECT COALESCE(MAX(sort_order), 0) + 1 AS next_order FROM services');
+            if ($orderResult instanceof mysqli_result) {
+                $nextOrder = (int)($orderResult->fetch_assoc()['next_order'] ?? 1);
+                $orderResult->free();
+            }
+
+            $nextId = 1;
+            $idResult = $conn->query('SELECT COALESCE(MAX(id), 0) + 1 AS next_id FROM services');
+            if ($idResult instanceof mysqli_result) {
+                $nextId = (int)($idResult->fetch_assoc()['next_id'] ?? 1);
+                $idResult->free();
+            }
+
+            if ($featured === 1) {
+                $conn->query('UPDATE services SET is_featured = 0');
+            }
+
+            $stmt = $conn->prepare('INSERT INTO services (id, name, price, is_featured, sort_order, is_active) VALUES (?, ?, ?, ?, ?, 1)');
+            if (!$stmt) {
+                redirectPanel('error', 'Nao foi possivel cadastrar o servico.');
+            }
+
+            $stmt->bind_param('isdii', $nextId, $name, $price, $featured, $nextOrder);
+            $ok = $stmt->execute();
+            $stmt->close();
+
+            if (!$ok) {
+                redirectPanel('error', 'Erro ao salvar servico no banco.');
+            }
+
+            redirectPanel('ok', 'Servico adicionado com sucesso.');
         }
 
-        redirectPanel('ok', 'Configuracoes atualizadas com sucesso.');
+        if ($action === 'update_service') {
+            $serviceId = (int)($_POST['service_id'] ?? 0);
+            $name = trim((string)($_POST['service_name'] ?? ''));
+            $price = parsePriceInput((string)($_POST['service_price'] ?? ''));
+            $featured = isset($_POST['service_featured']) ? 1 : 0;
+
+            if ($serviceId <= 0 || $name === '' || $price === null) {
+                redirectPanel('error', 'Preencha corretamente os dados do servico para atualizar.');
+            }
+
+            if (serviceNameExists($conn, $name, $serviceId)) {
+                redirectPanel('error', 'Ja existe outro servico com esse nome.');
+            }
+
+            if ($featured === 1) {
+                $stmtReset = $conn->prepare('UPDATE services SET is_featured = 0 WHERE id <> ?');
+                if ($stmtReset) {
+                    $stmtReset->bind_param('i', $serviceId);
+                    $stmtReset->execute();
+                    $stmtReset->close();
+                }
+            }
+
+            $stmt = $conn->prepare('UPDATE services SET name = ?, price = ?, is_featured = ? WHERE id = ?');
+            if (!$stmt) {
+                redirectPanel('error', 'Nao foi possivel atualizar o servico.');
+            }
+
+            $stmt->bind_param('sdii', $name, $price, $featured, $serviceId);
+            $ok = $stmt->execute();
+            $stmt->close();
+
+            if (!$ok) {
+                redirectPanel('error', 'Erro ao atualizar o servico.');
+            }
+
+            redirectPanel('ok', 'Servico atualizado com sucesso.');
+        }
+
+        if ($action === 'delete_service') {
+            $serviceId = (int)($_POST['service_id'] ?? 0);
+
+            if ($serviceId <= 0) {
+                redirectPanel('error', 'Servico invalido para exclusao.');
+            }
+
+            $stmt = $conn->prepare('DELETE FROM services WHERE id = ?');
+            if (!$stmt) {
+                redirectPanel('error', 'Nao foi possivel remover o servico.');
+            }
+
+            $stmt->bind_param('i', $serviceId);
+            $ok = $stmt->execute();
+            $stmt->close();
+
+            if (!$ok) {
+                redirectPanel('error', 'Erro ao remover o servico.');
+            }
+
+            redirectPanel('ok', 'Servico removido com sucesso.');
+        }
+
+        if ($action === 'add_review') {
+            $clientName = trim((string)($_POST['review_client_name'] ?? ''));
+            $quote = trim((string)($_POST['review_quote'] ?? ''));
+            $rating = parseRatingInput($_POST['review_rating'] ?? 5);
+
+            if ($clientName === '') {
+                $clientName = 'Cliente';
+            }
+
+            if ($quote === '') {
+                redirectPanel('error', 'Informe o texto da avaliacao.');
+            }
+
+            $uploadResult = uploadReviewPhoto(
+                $_FILES['review_photo'] ?? [],
+                $reviewUploadAbsoluteDir,
+                $reviewUploadRelativeDir
+            );
+
+            if (!$uploadResult['ok']) {
+                redirectPanel('error', (string)$uploadResult['error']);
+            }
+
+            $photoPath = (string)($uploadResult['path'] ?? '');
+            if ($photoPath === '') {
+                $photoPath = 'img/pessoa1.jpg';
+            }
+
+            $nextOrder = 1;
+            $orderResult = $conn->query('SELECT COALESCE(MAX(sort_order), 0) + 1 AS next_order FROM reviews');
+            if ($orderResult instanceof mysqli_result) {
+                $nextOrder = (int)($orderResult->fetch_assoc()['next_order'] ?? 1);
+                $orderResult->free();
+            }
+
+            $nextId = 1;
+            $idResult = $conn->query('SELECT COALESCE(MAX(id), 0) + 1 AS next_id FROM reviews');
+            if ($idResult instanceof mysqli_result) {
+                $nextId = (int)($idResult->fetch_assoc()['next_id'] ?? 1);
+                $idResult->free();
+            }
+
+            $stmt = $conn->prepare(
+                'INSERT INTO reviews (id, client_name, quote, rating, photo_path, sort_order, is_active)
+                 VALUES (?, ?, ?, ?, ?, ?, 1)'
+            );
+            if (!$stmt) {
+                redirectPanel('error', 'Nao foi possivel cadastrar a avaliacao.');
+            }
+
+            $stmt->bind_param('issisi', $nextId, $clientName, $quote, $rating, $photoPath, $nextOrder);
+            $ok = $stmt->execute();
+            $stmt->close();
+
+            if (!$ok) {
+                redirectPanel('error', 'Erro ao salvar avaliacao no banco.');
+            }
+
+            redirectPanel('ok', 'Avaliacao adicionada com sucesso.');
+        }
+
+        if ($action === 'update_review') {
+            $reviewId = (int)($_POST['review_id'] ?? 0);
+            $clientName = trim((string)($_POST['review_client_name'] ?? ''));
+            $quote = trim((string)($_POST['review_quote'] ?? ''));
+            $rating = parseRatingInput($_POST['review_rating'] ?? 5);
+            $currentPhotoPath = normalizeReviewPhotoPath((string)($_POST['current_photo_path'] ?? 'img/pessoa1.jpg'));
+
+            if ($reviewId <= 0 || $quote === '') {
+                redirectPanel('error', 'Preencha corretamente os dados da avaliacao para atualizar.');
+            }
+
+            if ($clientName === '') {
+                $clientName = 'Cliente';
+            }
+
+            $uploadResult = uploadReviewPhoto(
+                $_FILES['review_photo'] ?? [],
+                $reviewUploadAbsoluteDir,
+                $reviewUploadRelativeDir
+            );
+
+            if (!$uploadResult['ok']) {
+                redirectPanel('error', (string)$uploadResult['error']);
+            }
+
+            $photoPath = $currentPhotoPath;
+            if (!empty($uploadResult['path'])) {
+                $photoPath = (string)$uploadResult['path'];
+            }
+
+            $stmt = $conn->prepare('UPDATE reviews SET client_name = ?, quote = ?, rating = ?, photo_path = ? WHERE id = ?');
+            if (!$stmt) {
+                redirectPanel('error', 'Nao foi possivel atualizar a avaliacao.');
+            }
+
+            $stmt->bind_param('ssisi', $clientName, $quote, $rating, $photoPath, $reviewId);
+            $ok = $stmt->execute();
+            $stmt->close();
+
+            if (!$ok) {
+                redirectPanel('error', 'Erro ao atualizar a avaliacao.');
+            }
+
+            redirectPanel('ok', 'Avaliacao atualizada com sucesso.');
+        }
+
+        if ($action === 'delete_review') {
+            $reviewId = (int)($_POST['review_id'] ?? 0);
+
+            if ($reviewId <= 0) {
+                redirectPanel('error', 'Avaliacao invalida para exclusao.');
+            }
+
+            $stmt = $conn->prepare('DELETE FROM reviews WHERE id = ?');
+            if (!$stmt) {
+                redirectPanel('error', 'Nao foi possivel remover a avaliacao.');
+            }
+
+            $stmt->bind_param('i', $reviewId);
+            $ok = $stmt->execute();
+            $stmt->close();
+
+            if (!$ok) {
+                redirectPanel('error', 'Erro ao remover a avaliacao.');
+            }
+
+            redirectPanel('ok', 'Avaliacao removida com sucesso.');
+        }
+
+        if ($action === 'save_settings') {
+            $fields = [
+                'about_text' => (string)($_POST['about_text'] ?? ''),
+                'weekday_hours' => (string)($_POST['weekday_hours'] ?? ''),
+                'saturday_hours' => (string)($_POST['saturday_hours'] ?? ''),
+                'special_hours' => (string)($_POST['special_hours'] ?? ''),
+                'phone_1' => (string)($_POST['phone_1'] ?? ''),
+                'phone_2' => (string)($_POST['phone_2'] ?? ''),
+            ];
+
+            foreach ($fields as $key => $value) {
+                if (!saveSetting($conn, $key, trim($value))) {
+                    redirectPanel('error', 'Falha ao salvar as configuracoes gerais.');
+                }
+            }
+
+            redirectPanel('ok', 'Configuracoes atualizadas com sucesso.');
+        }
+
+        redirectPanel('error', 'Acao administrativa invalida.');
+    } catch (Throwable $exception) {
+        error_log('Admin panel POST error: ' . $exception->getMessage());
+        redirectPanel('error', 'Nao foi possivel processar a requisicao. Revise os dados e tente novamente.');
     }
 }
 

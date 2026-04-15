@@ -493,6 +493,10 @@ section {
     font-size: clamp(22px, 2.8vw, 36px);
     font-family: 'Outfit', sans-serif;
     font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
 }
 
 .preco-linha {
@@ -506,6 +510,8 @@ section {
     line-height: 1;
     text-shadow: 0 0 14px rgba(255, 223, 114, 0.62);
     font-family: 'Playfair Display', serif;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 /* EQUIPE */
@@ -898,7 +904,7 @@ section {
 
     .preco-item {
         display: grid;
-        grid-template-columns: 1fr auto;
+        grid-template-columns: minmax(0, 1fr) auto;
         gap: 10px 14px;
         align-items: center;
     }
