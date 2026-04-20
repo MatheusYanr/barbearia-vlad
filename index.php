@@ -95,7 +95,7 @@ $whatsapp2 = whatsappLink($phone2);
         rel="stylesheet">
 
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css?v=4">
 </head>
 
 <body>
@@ -127,7 +127,7 @@ $whatsapp2 = whatsappLink($phone2);
                 <h1 id="banner-titulo">BARBEARIA</h1>
                 <h2>VLAD</h2>
                 <div class="linha" aria-hidden="true"></div>
-                <a href="<?= h($whatsapp2) ?>" class="btn" aria-label="Agendar via WhatsApp">WhatsApp</a>
+                <a href="<?= h($whatsapp2) ?>" class="btn" aria-label="Abrir conversa no WhatsApp">WhatsApp</a>
             </div>
 
             <div class="banner-center" data-aos="fade-left">
@@ -135,6 +135,8 @@ $whatsapp2 = whatsappLink($phone2);
                 <p><?= h($weekdayHours) ?></p>
                 <p><?= h($saturdayHours) ?></p>
                 <p class="horario-especial"><?= h($specialHours) ?></p>
+                <p class="aviso-sem-agendamento">Não trabalhamos com agendamentos: o atendimento é feito <strong>por ordem
+                        de chegada</strong>.</p>
             </div>
         </section>
 
@@ -293,6 +295,9 @@ $whatsapp2 = whatsappLink($phone2);
                 <p>A experiência de barbearia mais tradicional da sua região. Cortes modernos e um ambiente pensado para
                     o
                     homem contemporâneo.</p>
+                <p class="rodape-admin-link-wrap">
+                    <a href="admin/login.php" class="admin-link">Área administrativa</a>
+                </p>
             </div>
             <div class="rodape-coluna">
                 <h3>Visite-nos</h3>

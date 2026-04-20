@@ -263,6 +263,20 @@ section {
     margin-top: 10px;
 }
 
+.banner-center .aviso-sem-agendamento {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    color: var(--text-soft);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.banner-center .aviso-sem-agendamento strong {
+    color: var(--text);
+    font-weight: 600;
+}
+
 /* BLOCOS BASE */
 .sobre,
 .servicos,
@@ -762,6 +776,19 @@ section {
     margin-bottom: 12px;
     font-size: 15px;
     line-height: 1.6;
+}
+
+.logo-coluna > p:first-of-type {
+    margin-bottom: 6px;
+}
+
+.logo-coluna .rodape-admin-link-wrap {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.logo-coluna .rodape-admin-link-wrap .admin-link {
+    font-size: 15px;
 }
 
 .admin-link {
